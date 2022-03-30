@@ -1,13 +1,23 @@
-# Metrics-Collector
+# Linux-Metrics-Collector
+A metrics collection application for Linux machines. Created for MSCS 710 Project at Marist College.
 
-# How to set up Development Environment
+## Development Environment Setup
+The technologies used to develop this application require development tools themselves to make changes to the project as a whole. This section discusses how to access and make changes to the various modules which make up the frontend and backend of the project.
 
-First, download rust using this link: https://www.rust-lang.org/tools/install
-
-Once that is finished, go into IntelliJ and download the Rust and TOML plugins.
-
-You will have to set up run configurations. To do this, click on the main.rs file. Next click on 'Run -> Edit 
-Configurations' in the top menu bar. From there click "Add a new configuration," and then cargo. 
-
-Give the configuration a name, such as "collector" or "server." You will then need to set the working directory. For the
-collector for example, I set it to "~/.../Metrics-Collector/client/collector." Hit Ok and try running the app.
+### Rust Metrics Collector Module
+* Download [Rust](https://www.rust-lang.org/tools/install)
+* Download [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/#section=windows)
+* Download Rust and TOML plugins for IntelliJ IDEA
+  * In IntelliJ IDEA go to File > Settings > Plugins
+  * Type "Rust" in the search bar and click Install
+  * When asked to install TOML, click Yes
+* Clone this repository and open it in IntelliJ
+  * In the toolbar, click File > Open > ~/.../Metrics-Collector/Client/Collector
+* Setup run configurations
+  * Select the main.rs file in the project hierarchy
+  * In the toolbar, click Run > Edit > Configurations
+  * Click "Add a new configuration" > cargo
+  * Name the configuration "collector" or "server"
+  * Set the working directory to ~/.../Metrics-Collector/Client/Collector
+* Click on the Cargo.toml file and click Attach in the top left of IntelliJ
+* Hit Ok and try running the application
