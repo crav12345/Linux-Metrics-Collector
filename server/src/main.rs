@@ -1,28 +1,24 @@
-// declare the existence of modules
-mod api;
+// Declare modules.
+mod controllers;
+mod collector;
 
-use api::task::{
-    hello,
-    echo,
-};
+// Import methods from modules.
+use controllers::task::{hello, echo};
+use actix_web::{HttpServer, App, Responder, middleware::Logger};
 
-use actix_web::{HttpServer, App, web::Data, middleware::Logger, Responder};
-
-// Go to 'http://127.0.0.1:8080/' to test route
-
-
-// The macro in the line below lets actix know this is where to start running
+// Macro to declare actix entry point.
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Set logging variables that actix-web reads to determine whether to log or not
+    // Set variables to inform actix-web whether to log or not.
     std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
-    // Create HTTP Server Struct
+    // Create HTTP server struct.
     HttpServer::new(move || {
-        // Pass in default logger object
+        // Pass in default logger object.
         let logger = Logger::default();
+
         // Create App Instance
         App::new()
             // pass logger in to give us logging
@@ -31,7 +27,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(echo)
     })
-        // bind HTTP object to "127.0.0.1" port 80
+        // Bind server struct to "127.0.0.1" port 8080.
         .bind(("127.0.0.1", 8080))?
         .run()
         .await
