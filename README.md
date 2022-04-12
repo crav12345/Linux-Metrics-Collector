@@ -37,3 +37,11 @@ The technologies used to develop this application require development tools them
     * ~/.../Metrics-Collector/server
 * Click on the Cargo.toml file and click Attach in the top left of IntelliJ
 * Hit Ok and try running the application
+
+### Database Module
+* Create Database in SQLite
+  * From the project root, cd into the 'database' directory
+  * Create the database by running and start SQLite with the command: "sqlite3 mmc.db"
+  * To create tables (or reset the tables), run the command: ".read create_tables.sql"
+  * To insert sample data into the tables, run the command: ".read sample_data.sql"
+  * Test that everything works with "SELECT * FROM <TABLE_NAME>"
