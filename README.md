@@ -23,6 +23,7 @@ The technologies used to develop this application require development tools them
   * Name the configuration "server"
   * Set the working directory to
     * ~/.../Metrics-Collector/server
+  * Check the box that says "Run with root privileges"
 * Click on the Cargo.toml file and click Attach in the top left of IntelliJ
 * Hit Ok and try running the application
 
