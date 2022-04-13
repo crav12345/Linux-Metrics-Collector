@@ -3,7 +3,7 @@ use crate::metrics_collector_controllers::collector_utils;
 
 use collector_utils::{Device, Proc, print_processes};
 
-pub fn collect_all_metrics() {
+pub fn collect_all_metrics() -> Vec<Proc> {
 
     // Collect Process Info
     let mut processes = Vec::new();
@@ -22,8 +22,8 @@ pub fn collect_all_metrics() {
 
         processes.push(new_process);
     }
-
     // print_processes(processes);
+    return processes;
 }
 
 pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, String){
@@ -39,6 +39,7 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
 }
 
 pub fn get_disk_usage(p: procfs::process::Process) {
+    // TODO: Format variables below (format_memory function)
     let read = p.io().unwrap().read_bytes;
     let written = p.io().unwrap().write_bytes;
 }

@@ -1,3 +1,7 @@
+use serde::Serialize;
+use uuid::Uuid;
+
+// Not sure if we are still using this. Might not be needed
 // Device Struct
 pub struct Device {
     total_mem: String,
@@ -14,24 +18,33 @@ impl Device {
     }
 }
 
-// Process Struct
+// Process Struct (Not too sure what line above it does. I'll look into it another time)
+#[derive(Serialize)]
 pub struct Proc {
-    proc_id: i32,
-    proc_name: String,
-    num_threads: i64,
-    proc_mem: String,
+    pub uuid: String,
+    pub proc_id: i32,
+    pub proc_name: String,
+    pub num_threads: i64,
+    pub proc_mem: String,
 }
 
 impl Default for Proc {
     fn default () -> Proc {
-        Proc{proc_id: 0, proc_name: "".to_owned(), num_threads: 0, proc_mem: "".to_owned()}
+        Proc {
+            uuid: Uuid::new_v4().to_string(),
+            proc_id: 0,
+            proc_name: "".to_owned(),
+            num_threads: 0,
+            proc_mem: "".to_owned()
+        }
     }
 }
 
 impl Proc {
     // Construct process
-    pub fn new(id: i32, name: &str, threads: i64, mem: &str) -> Proc {
+    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str) -> Proc {
         Proc {
+            uuid: Uuid::new_v4().to_string(),
             proc_id: id,
             proc_name: name.to_string(),
             num_threads: threads,
