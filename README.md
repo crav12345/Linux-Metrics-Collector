@@ -28,9 +28,13 @@ The technologies used to develop this application require development tools them
 * Hit Ok and try running the application
 
 ### Interacting with the Database
-* Create Database in SQLite
-  * From the project root, cd into the 'database' directory
-  * Create the database by running and start SQLite with the command: "sqlite3 mmc.db"
-  * To create tables (or reset the tables), run the command: ".read create_tables.sql"
-  * To insert sample data into the tables, run the command: ".read sample_data.sql"
-  * Test that everything works with "SELECT * FROM <TABLE_NAME>"
+* Running the server will automatically create a database if it is not there already.
+  * It will appear in the 'metrics_collector_controllers' directory
+* To query the database
+  * Enter your terminal and cd into the metrics_collector_controllers directory
+  * Enter the `sqlite3` command
+  * Enter `.open data.db`
+  * Query with "SELECT * FROM process;"
+* Editing or building upon the database
+  * Whenever the database must be changed or restarted, the 'data.db' file has to be deleted from the project folder
+  * Rebuild it by re-running the server
