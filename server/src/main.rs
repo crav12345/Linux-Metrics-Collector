@@ -1,20 +1,46 @@
 mod metrics_collector_controllers;
+mod commands;
 
 use metrics_collector_controllers::{collector, collector_utils, database};
+use commands::cli_commands;
 
 use collector_utils::{Proc};
 use rusqlite::{Connection, Result};
 use rusqlite::NO_PARAMS;
+use std::time::{SystemTime, Duration, Instant};
+use std::io::Write;
+use clokwerk::{Scheduler, TimeUnits, Interval::Seconds};
+use crate::collector::get_memory_usage;
+
+fn prompt(name:&str) -> String {
+    let mut line = String::new();
+    print!("{}", name);
+    std::io::stdout().flush().unwrap();
+    std::io::stdin().read_line(&mut line).expect("Error: Could not read a line");
+
+    return line.trim().to_string()
+}
 
 fn main() {
+
+    let mut scheduler = Scheduler::new();
+    scheduler.every(15.seconds()).run(|| database::update_data());
+
+    let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
+
     // Open the database. Create it if it doesn't exist
-    let result1: Result<()> = database::open_database();
+    let establish_db: Result<()> = database::open_database();
+    let fill_database = database::update_data();
 
-    // Collect data on processes
-    let processes: Vec<Proc> = collector::collect_all_metrics();
-
-    // Send the vector of processes away to be stored in the database
-    let result2: Result<()> = database::store_data(processes);
+    loop {
+        let input = prompt("MCC>  ");
+        if input=="M" || input=="m" {
+            cli_commands::display_memory_info();
+        }
+        else if input=="exit" {
+            break;
+        };
+    }
 
     /*
     let result3: Result<()> = database::purge_database();

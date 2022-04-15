@@ -1,10 +1,7 @@
-use sysinfo::Process;
 use crate::metrics_collector_controllers::collector_utils;
-
-use collector_utils::{Device, Proc, print_processes};
+use collector_utils::Proc;
 
 pub fn collect_all_metrics() -> Vec<Proc> {
-
     // Collect Process Info
     let mut processes = Vec::new();
     for p in procfs::process::all_processes().unwrap() {

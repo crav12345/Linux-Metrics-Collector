@@ -1,6 +1,7 @@
 use rusqlite::{Connection, Result, params};
 use rusqlite::NO_PARAMS;
 use crate::Proc;
+use crate::collector::collect_all_metrics;
 
 pub fn open_database() -> Result<()> {
     // Creates a database if it does not already exist
@@ -39,6 +40,39 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     }
     Ok(())
 }
+
+pub fn update_data() {
+    // Collect data on processes
+    let processes: Vec<Proc> = collect_all_metrics();
+
+    // Send the vector of processes away to be stored in the database
+    let store_processes: Result<()> = store_data(processes);
+}
+
+pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn.prepare("SELECT * FROM process")?;
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(Proc {
+            uuid: row.get(0)?,
+            proc_id: row.get(1)?,
+            proc_name:row.get(2)?,
+            num_threads: row.get(3)?,
+            proc_mem: row.get(4)?,
+        })
+    })?;
+
+    let mut mem_data = Vec::new();
+    for p in process_iter {
+        mem_data.push(p.unwrap());
+    }
+
+    Ok(mem_data)
+}
+
 
 /*
 // TODO: PURGE DATABASE (DOES NOT WORK YET)
