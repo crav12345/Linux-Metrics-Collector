@@ -50,16 +50,16 @@ pub fn get_disk_usage(p: procfs::process::Process) {
 pub fn get_cpu_usage(p: Process) -> u64 {
     // Get amount of time p has been scheduled in kernel mode and user mode at
     // this moment.
-    let kernel_mode_time_before = p.stat.stime() / procfs::ticks_per_second();
-    let user_mode_time_before = p.stat.utime() / procfs::ticks_per_second();
+    let kernel_mode_time_before = p.stat.stime / procfs::ticks_per_second();
+    let user_mode_time_before = p.stat.utime / procfs::ticks_per_second();
 
     // Let the sample time pass.
     thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
 
     // Get amount of time p has been scheduled in kernel mode and user mode
     // again.
-    let kernel_mode_time_after = p.stat.stime() / procfs::ticks_per_second();
-    let user_mode_time_after = p.stat.utime() / procfs::ticks_per_second();
+    let kernel_mode_time_after = p.stat.stime / procfs::ticks_per_second();
+    let user_mode_time_after = p.stat.utime / procfs::ticks_per_second();
 
     // Calculate total time in both modes.
     let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
@@ -83,6 +83,6 @@ mod collector_tests {
         let this_program = Process::myself().unwrap();
 
         // Get CPU usage of this process.
-        assert!(get_cpu_usage(this_program));
+        assert!(get_cpu_usage(this_program) > 0);
     }
 }
