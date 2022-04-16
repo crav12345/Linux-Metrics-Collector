@@ -65,8 +65,8 @@ pub fn get_cpu_usage(p: Process) -> u64 {
 
     // Get amount of time p has been scheduled in kernel mode and user mode
     // again.
-    let kernel_mode_time_after = p.stat.stime / ticks_per_second;
-    let user_mode_time_after = p.stat.utime / ticks_per_second;
+    let kernel_mode_time_after = p.stat.stime;// / ticks_per_second;
+    let user_mode_time_after = p.stat.utime; /// ticks_per_second;
 
     println!("Kernel mode time after sample: {}", kernel_mode_time_after);
     println!("User mode time after sample: {}", user_mode_time_after);
