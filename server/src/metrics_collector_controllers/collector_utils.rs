@@ -28,6 +28,7 @@ pub struct Proc {
     pub proc_name: String,
     pub num_threads: i64,
     pub proc_mem: String,
+    pub proc_cpu: u64
 }
 
 impl Default for Proc {
@@ -37,20 +38,22 @@ impl Default for Proc {
             proc_id: 0,
             proc_name: "".to_owned(),
             num_threads: 0,
-            proc_mem: "".to_owned()
+            proc_mem: "".to_owned(),
+            proc_cpu: 0
         }
     }
 }
 
 impl Proc {
     // Construct process
-    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str) -> Proc {
+    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: u64) -> Proc {
         Proc {
             uuid: Uuid::new_v4().to_string(),
             proc_id: id,
             proc_name: name.to_string(),
             num_threads: threads,
             proc_mem: mem.to_string(),
+            proc_cpu: cpu
         }
     }
 
@@ -69,6 +72,8 @@ impl Proc {
     pub fn set_pmemory(&mut self, memory: String) {
         self.proc_mem = memory.to_string();
     }
+
+    pub fn set_cpu_usage(&mut self, cpu_usage: u64) { self.proc_cpu = cpu_usage }
 }
 
 /*

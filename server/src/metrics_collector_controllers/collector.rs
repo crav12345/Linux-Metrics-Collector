@@ -16,12 +16,14 @@ pub fn collect_all_metrics() -> Vec<Proc> {
 
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
+        let cpu_info = get_cpu_usage(p);
 
         // set process object's fields to collected metrics
         new_process.set_pid(memory_info.0);
         new_process.set_pname(memory_info.1);
         new_process.set_threads(memory_info.2);
         new_process.set_pmemory(memory_info.3);
+        new_process.set_cpu_usage(cpu_info);
 
         processes.push(new_process);
     }
@@ -48,7 +50,7 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
-pub fn get_cpu_usage(p: Process) -> u64 {
+pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as u64;
 
@@ -56,9 +58,6 @@ pub fn get_cpu_usage(p: Process) -> u64 {
     // this moment.
     let kernel_mode_time_before = p.stat.stime / ticks_per_second;
     let user_mode_time_before = p.stat.utime / ticks_per_second;
-
-    println!("Kernel mode time before sample: {}", kernel_mode_time_before);
-    println!("User mode time before sample: {}", user_mode_time_before);
 
     // Let the sample time pass.
     thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
@@ -68,20 +67,12 @@ pub fn get_cpu_usage(p: Process) -> u64 {
     let kernel_mode_time_after = p.stat.stime / ticks_per_second;
     let user_mode_time_after = p.stat.utime / ticks_per_second;
 
-    println!("Kernel mode time after sample: {}", kernel_mode_time_after);
-    println!("User mode time after sample: {}", user_mode_time_after);
-
     // Calculate total time in both modes.
     let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
     let user_mode_time = user_mode_time_after - user_mode_time_before;
 
-    println!("Kernel mode time: {}", kernel_mode_time);
-    println!("User mode time: {}", user_mode_time);
-
     // Calculate total CPU usage over the sample time.
     let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
-
-    println!("CPU usage: {}", cpu_usage);
 
     // Send back the total CPU usage.
     return cpu_usage;
