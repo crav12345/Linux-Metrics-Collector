@@ -30,7 +30,6 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     let num_threads = p.stat.num_threads;
     let mem_usage = collector_utils::format_memory(p_memory);
 
-
     let memory_info: (i32, String, i64, String) = (id, p_name, num_threads, mem_usage);
 
     return memory_info;
@@ -40,4 +39,24 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     // TODO: Format variables below (format_memory function)
     let read = p.io().unwrap().read_bytes;
     let written = p.io().unwrap().write_bytes;
+}
+
+#[cfg(test)]
+mod collector_tests {
+
+    // Test to make sure that the format_memory() function returns the expected values
+    #[test]
+    fn test_get_memory_usage() {
+        // get process
+        let p1 = procfs::process::all_processes().unwrap();
+        let p2 = p1.first().unwrap();
+        let p3 = p2.to_owned();
+        let result = crate::collector::get_memory_usage(p3);
+
+        // Make sure that the returned metrics have values that make sense
+        assert!(result.0.is_positive());
+        assert!(result.1.len() > 0);
+        assert!(result.2 >= 0);
+        assert!(result.3.len() > 2);
+    }
 }

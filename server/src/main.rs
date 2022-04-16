@@ -22,7 +22,7 @@ fn prompt(name:&str) -> String {
 
 fn main() {
     // Open the database. Create it if it doesn't exist
-    let establish_db: Result<()> = database::open_database();
+    let establish_db: Result<()> = database::create_database();
     let fill_database = database::update_data();
 
     // Initialize scheduler
@@ -51,6 +51,6 @@ fn main() {
             println!("{}", e);
         }
     }
-     */
+    */
 
 }
