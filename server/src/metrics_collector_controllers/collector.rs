@@ -1,5 +1,10 @@
+use std::thread;
+use std::time;
 use crate::metrics_collector_controllers::collector_utils;
+
 use collector_utils::Proc;
+
+const SAMPLE_TIME: u64 = 1;
 
 pub fn collect_all_metrics() -> Vec<Proc> {
     // Collect Process Info
@@ -40,4 +45,29 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     // TODO: Format variables below (format_memory function)
     let read = p.io().unwrap().read_bytes;
     let written = p.io().unwrap().write_bytes;
+}
+
+pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
+    // Get amount of time p has been scheduled in kernel mode and user mode at
+    // this moment.
+    let kernel_mode_time_before = p.stat.stime() / procfs::ticks_per_second();
+    let user_mode_time_before = p.stat.utime() / procfs::ticks_per_second();
+
+    // Let the sample time pass.
+    thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
+
+    // Get amount of time p has been scheduled in kernel mode and user mode
+    // again.
+    let kernel_mode_time_after = p.stat.stime() / procfs::ticks_per_second();
+    let user_mode_time_after = p.stat.utime() / procfs::ticks_per_second();
+
+    // Calculate total time in both modes.
+    let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
+    let user_mode_time = user_mode_time_after - user_mode_time_before;
+
+    // Calculate total CPU usage over the sample time.
+    let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
+
+    // Send back the total CPU usage.
+    return cpu_usage;
 }
