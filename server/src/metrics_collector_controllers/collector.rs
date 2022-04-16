@@ -50,7 +50,7 @@ pub fn get_disk_usage(p: procfs::process::Process) {
 
 pub fn get_cpu_usage(p: Process) -> u64 {
     // Get ticks per second for calculating CPU time.
-    let ticks_per_second = ticks_per_second().unwrap();
+    let ticks_per_second = ticks_per_second().unwrap() as u64;
 
     // Get amount of time p has been scheduled in kernel mode and user mode at
     // this moment.
