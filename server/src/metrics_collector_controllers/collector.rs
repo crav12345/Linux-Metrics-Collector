@@ -1,7 +1,7 @@
 use std::thread;
 use std::time;
 use crate::metrics_collector_controllers::collector_utils;
-
+use procfs::process::Process;
 use collector_utils::Proc;
 
 const SAMPLE_TIME: u64 = 1;
@@ -47,7 +47,7 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
-pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
+pub fn get_cpu_usage(p: Process) -> u64 {
     // Get amount of time p has been scheduled in kernel mode and user mode at
     // this moment.
     let kernel_mode_time_before = p.stat.stime() / procfs::ticks_per_second();
@@ -70,4 +70,19 @@ pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
 
     // Send back the total CPU usage.
     return cpu_usage;
+}
+
+#[cfg(test)]
+mod collector_tests {
+    use super::*;
+
+    // Ravosa Tests
+    #[test]
+    fn cpu_usage() {
+        // Check this program's process ID.
+        let this_program = Process::myself().unwrap();
+
+        // Get CPU usage of this process.
+        assert!(get_cpu_usage(this_program));
+    }
 }
