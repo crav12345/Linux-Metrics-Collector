@@ -89,7 +89,7 @@ mod collector_tests {
         // Get the cpu usage of this process.
         let result = get_cpu_usage(this_program);
 
-        println!(result);
+        println!("{}", result);
 
         // Get CPU usage of this process.
         assert!(result > 0);
