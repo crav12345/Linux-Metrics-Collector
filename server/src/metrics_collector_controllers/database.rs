@@ -72,7 +72,6 @@ pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
     Ok(mem_data)
 }
 
-
 /*
 // TODO: PURGE DATABASE (DOES NOT WORK YET)
 pub fn purge_database() -> Result<()> {
