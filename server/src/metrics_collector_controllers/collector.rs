@@ -86,7 +86,12 @@ mod collector_tests {
         // Check this program's process ID.
         let this_program = Process::myself().unwrap();
 
+        // Get the cpu usage of this process.
+        let result = get_cpu_usage(this_program);
+
+        println!(result);
+
         // Get CPU usage of this process.
-        assert!(get_cpu_usage(this_program) > 0);
+        assert!(result > 0);
     }
 }
