@@ -57,6 +57,9 @@ pub fn get_cpu_usage(p: Process) -> u64 {
     let kernel_mode_time_before = p.stat.stime / ticks_per_second;
     let user_mode_time_before = p.stat.utime / ticks_per_second;
 
+    println!("Kernel mode time before sample: {}", kernel_mode_time_before);
+    println!("User mode time before sample: {}", user_mode_time_before);
+
     // Let the sample time pass.
     thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
 
@@ -65,12 +68,20 @@ pub fn get_cpu_usage(p: Process) -> u64 {
     let kernel_mode_time_after = p.stat.stime / ticks_per_second;
     let user_mode_time_after = p.stat.utime / ticks_per_second;
 
+    println!("Kernel mode time after sample: {}", kernel_mode_time_after);
+    println!("User mode time after sample: {}", user_mode_time_after);
+
     // Calculate total time in both modes.
     let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
     let user_mode_time = user_mode_time_after - user_mode_time_before;
 
+    println!("Kernel mode time: {}", kernel_mode_time);
+    println!("User mode time: {}", user_mode_time);
+
     // Calculate total CPU usage over the sample time.
     let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
+
+    println!("CPU usage: {}", cpu_usage);
 
     // Send back the total CPU usage.
     return cpu_usage;
@@ -84,12 +95,10 @@ mod collector_tests {
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
-        let this_program = Process::myself().unwrap();
+        let p = procfs::all_processes();
 
         // Get the cpu usage of this process.
-        let result = get_cpu_usage(this_program);
-
-        println!("{}", result);
+        let result = get_cpu_usage(p[0]);
 
         // Get CPU usage of this process.
         assert!(result > 0);
