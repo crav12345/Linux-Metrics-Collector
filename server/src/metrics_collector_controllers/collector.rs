@@ -95,10 +95,10 @@ mod collector_tests {
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
-        let p = procfs::process::all_processes().unwrap();
+        let this_process = Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = get_cpu_usage(p[0]);
+        let result = get_cpu_usage(this_process);
 
         // Get CPU usage of this process.
         assert!(result > 0);
