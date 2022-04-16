@@ -1,5 +1,4 @@
 use rusqlite::{Connection, Result, params};
-use rusqlite::NO_PARAMS;
 use crate::Proc;
 use crate::collector::collect_all_metrics;
 
@@ -19,7 +18,7 @@ pub fn open_database() -> Result<()> {
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
 
-        NO_PARAMS,
+        [],
     )?;
 
     Ok(())
@@ -86,3 +85,21 @@ pub fn purge_database() -> Result<()> {
     )?;
     Ok(())
 }*/
+
+// NOTE: the convention for rust unit tests is that they live in the same file as the
+//       code being tested
+
+// avoid compiling unless 'cargo test' is entered
+#[cfg(test)]
+mod collector_tests {
+    #[test]
+    fn test_basic() {
+        assert!(1 == 1);
+    }
+
+    #[test]
+    fn test_equals() {
+        assert_eq!(2, 1 + 1);
+        assert_ne!(2, 1 + 2);
+    }
+}

@@ -1,6 +1,7 @@
 use serde::Serialize;
 use uuid::Uuid;
 
+/*
 // Not sure if we are still using this. Might not be needed
 // Device Struct
 pub struct Device {
@@ -17,6 +18,7 @@ impl Device {
         }
     }
 }
+ */
 
 // Process Struct (Not too sure what line above it does. I'll look into it another time)
 #[derive(Serialize)]
@@ -69,6 +71,7 @@ impl Proc {
     }
 }
 
+/*
 pub fn print_device(device: Device) {
     println!("Total Memory: {}, Memory Active {}", device.total_mem, device.active_mem);
 }
@@ -90,20 +93,21 @@ pub fn get_percent(num1: i64, num2: u64) -> String {
 pub fn bytes_to_kb(bytes: u64) -> u64 {
     return bytes / 1000;
 }
+*/
 
 pub fn format_memory(bytes: i64) -> String {
     let bytesfloat= bytes as f64;
     if bytes >= 1000000000 {
         let answer = bytesfloat / 1000000000.0;
-        return format!("{:.5} GB", answer);
+        return format!("{:.2} GB", answer);
     }
     else if bytes >= 1000000 {
         let answer = bytesfloat / 1000000.0;
-        return format!("{:.5} MB", answer);
+        return format!("{:.2} MB", answer);
     }
     else if bytes >= 1000 {
         let answer = bytesfloat / 1000.0;
-        return format!("{:.5} KB", answer);
+        return format!("{:.2} KB", answer);
     }
-    return format!("{} B", bytes.to_string());
+    return format!("{:.2} B", bytes);
 }

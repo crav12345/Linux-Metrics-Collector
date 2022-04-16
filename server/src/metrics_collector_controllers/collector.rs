@@ -30,6 +30,7 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     let num_threads = p.stat.num_threads;
     let mem_usage = collector_utils::format_memory(p_memory);
 
+
     let memory_info: (i32, String, i64, String) = (id, p_name, num_threads, mem_usage);
 
     return memory_info;
