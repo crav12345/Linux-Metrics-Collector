@@ -1,5 +1,11 @@
+use std::thread;
+use std::time;
 use crate::metrics_collector_controllers::collector_utils;
+use procfs::process::Process;
+use procfs::ticks_per_second;
 use collector_utils::Proc;
+
+const SAMPLE_TIME: u64 = 1;
 
 pub fn collect_all_metrics() -> Vec<Proc> {
     // Collect Process Info
