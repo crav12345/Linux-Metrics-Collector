@@ -48,7 +48,6 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     let num_threads = p.stat.num_threads;
     let mem_usage = collector_utils::format_memory(p_memory);
 
-
     let memory_info: (i32, String, i64, String) = (id, p_name, num_threads, mem_usage);
 
     return memory_info;
@@ -60,7 +59,7 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
-pub fn get_cpu_usage(p: &procfs::process::Process) -> u64 {
+pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as u64;
 
@@ -85,7 +84,7 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> u64 {
     let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
 
     // Send back the total CPU usage.
-    return cpu_usage;
+    return cpu_usage as f32;
 }
 
 #[cfg(test)]
@@ -102,6 +101,6 @@ mod collector_tests {
         let result = get_cpu_usage(&this_process);
 
         // Validate result.
-        assert!(result >= 0);
+        assert!(result >= 0.0);
     }
 }
