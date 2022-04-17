@@ -89,7 +89,6 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
 
 #[cfg(test)]
 mod collector_tests {
-    // Test to make sure that the format_memory() function returns the expected values
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
@@ -101,6 +100,7 @@ mod collector_tests {
         // Validate result.
         assert!(result >= 0.0);
 
+    // Test to make sure that the format_memory() function returns the expected values
     #[test]
     fn test_get_memory_usage() {
         // get process
