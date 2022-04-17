@@ -36,7 +36,6 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     let num_threads = p.stat.num_threads;
     let mem_usage = collector_utils::format_memory(p_memory);
 
-
     let memory_info: (i32, String, i64, String) = (id, p_name, num_threads, mem_usage);
 
     return memory_info;
@@ -48,59 +47,22 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
-pub fn get_cpu_usage(p: Process) -> u64 {
-    // Get ticks per second for calculating CPU time.
-    let ticks_per_second = ticks_per_second().unwrap() as u64;
-
-    // Get amount of time p has been scheduled in kernel mode and user mode at
-    // this moment.
-    let kernel_mode_time_before = p.stat.stime / ticks_per_second;
-    let user_mode_time_before = p.stat.utime / ticks_per_second;
-
-    println!("Kernel mode time before sample: {}", kernel_mode_time_before);
-    println!("User mode time before sample: {}", user_mode_time_before);
-
-    // Let the sample time pass.
-    thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
-
-    // Get amount of time p has been scheduled in kernel mode and user mode
-    // again.
-    let kernel_mode_time_after = p.stat.stime / ticks_per_second;
-    let user_mode_time_after = p.stat.utime / ticks_per_second;
-
-    println!("Kernel mode time after sample: {}", kernel_mode_time_after);
-    println!("User mode time after sample: {}", user_mode_time_after);
-
-    // Calculate total time in both modes.
-    let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
-    let user_mode_time = user_mode_time_after - user_mode_time_before;
-
-    println!("Kernel mode time: {}", kernel_mode_time);
-    println!("User mode time: {}", user_mode_time);
-
-    // Calculate total CPU usage over the sample time.
-    let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
-
-    println!("CPU usage: {}", cpu_usage);
-
-    // Send back the total CPU usage.
-    return cpu_usage;
-}
-
 #[cfg(test)]
 mod collector_tests {
-    use super::*;
 
-    // Ravosa Tests
+    // Test to make sure that the format_memory() function returns the expected values
     #[test]
-    fn cpu_usage() {
-        // Check this program's process ID.
-        let this_process = Process::myself().unwrap();
+    fn test_get_memory_usage() {
+        // get process
+        let p1 = procfs::process::all_processes().unwrap();
+        let p2 = p1.first().unwrap();
+        let p3 = p2.to_owned();
+        let result = crate::collector::get_memory_usage(p3);
 
-        // Get the cpu usage of this process.
-        let result = get_cpu_usage(this_process);
-
-        // Validate result.
-        assert!(result >= 0);
+        // Make sure that the returned metrics have values that make sense
+        assert!(result.0.is_positive());
+        assert!(result.1.len() > 0);
+        assert!(result.2 >= 0);
+        assert!(result.3.len() > 2);
     }
 }
