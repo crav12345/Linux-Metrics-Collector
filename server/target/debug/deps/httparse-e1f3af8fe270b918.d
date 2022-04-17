@@ -1,0 +1,12 @@
+/home/kali/Desktop/Linux-Metrics-Collector/server/target/debug/deps/httparse-e1f3af8fe270b918.rmeta: /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/lib.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/iter.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/macros.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/mod.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/sse42.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/avx2.rs
+
+/home/kali/Desktop/Linux-Metrics-Collector/server/target/debug/deps/libhttparse-e1f3af8fe270b918.rlib: /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/lib.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/iter.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/macros.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/mod.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/sse42.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/avx2.rs
+
+/home/kali/Desktop/Linux-Metrics-Collector/server/target/debug/deps/httparse-e1f3af8fe270b918.d: /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/lib.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/iter.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/macros.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/mod.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/sse42.rs /home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/avx2.rs
+
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/lib.rs:
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/iter.rs:
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/macros.rs:
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/mod.rs:
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/sse42.rs:
+/home/kali/.cargo/registry/src/github.com-1ecc6299db9ec823/httparse-1.7.0/src/simd/avx2.rs:

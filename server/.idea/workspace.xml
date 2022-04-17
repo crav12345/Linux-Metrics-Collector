@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f1df675b-25b5-4c23-8a5e-d6fcd972dbd3" name="Changes" comment="" />
+    <list default="true" id="c27e6f51-f0ac-4e70-ab41-61c11671d21c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/server" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,29 +23,29 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="27nhJ9NyJvH8ewi8fgW5VKXTSpE" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="s7b5klf8" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="f1df675b-25b5-4c23-8a5e-d6fcd972dbd3" name="Changes" comment="" />
-      <created>1649961692054</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1649961692054</updated>
-    </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

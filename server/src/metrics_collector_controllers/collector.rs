@@ -14,6 +14,15 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         // Use default constructor to create "null" process
         let mut new_process = Proc::default();
 
+        // CPU info requires its own thread because it needs to measure usage
+        // over a sample time of 's' seconds. This causes a bottleneck if left
+        // on the same thread.
+        //let handler = thread::spawn(|| {
+        //    return get_cpu_usage(&p);
+        //});
+        // Just made cpu sample time extremely small for now.
+        let cpu_usage = get_cpu_usage(&p);
+
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
 
@@ -22,9 +31,12 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         new_process.set_pname(memory_info.1);
         new_process.set_threads(memory_info.2);
         new_process.set_pmemory(memory_info.3);
+        new_process.set_cpu_usage(cpu_usage);
+        //new_process.set_cpu_usage(handler.join().unwrap());
 
         processes.push(new_process);
     }
+
     // print_processes(processes);
     return processes;
 }
@@ -47,11 +59,48 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
+pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
+    // Get ticks per second for calculating CPU time.
+    let ticks_per_second = ticks_per_second().unwrap() as u64;
+
+    // Get amount of time p has been scheduled in kernel mode and user mode at
+    // this moment.
+    let kernel_mode_time_before = p.stat.stime / ticks_per_second;
+    let user_mode_time_before = p.stat.utime / ticks_per_second;
+
+    // Let the sample time pass.
+    thread::sleep(time::Duration::from_millis(SAMPLE_TIME));
+
+    // Get amount of time p has been scheduled in kernel mode and user mode
+    // again.
+    let kernel_mode_time_after = p.stat.stime / ticks_per_second;
+    let user_mode_time_after = p.stat.utime / ticks_per_second;
+
+    // Calculate total time in both modes.
+    let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
+    let user_mode_time = user_mode_time_after - user_mode_time_before;
+
+    // Calculate total CPU usage over the sample time.
+    let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
+
+    // Send back the total CPU usage.
+    return cpu_usage as f32;
+}
+
 #[cfg(test)]
 mod collector_tests {
-
     // Test to make sure that the format_memory() function returns the expected values
     #[test]
+    fn cpu_usage() {
+        // Check this program's process ID.
+        let this_process = Process::myself().unwrap();
+
+        // Get the cpu usage of this process.
+        let result = get_cpu_usage(&this_process);
+
+        // Validate result.
+        assert!(result >= 0.0);
+
     fn test_get_memory_usage() {
         // get process
         let p1 = procfs::process::all_processes().unwrap();

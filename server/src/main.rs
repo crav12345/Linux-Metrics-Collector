@@ -27,8 +27,10 @@ fn main() {
 
     // Initialize scheduler
     let mut scheduler = Scheduler::new();
+
     // Have scheduler send current metrics to database every 15 seconds
     scheduler.every(15.seconds()).run(|| database::update_data());
+
     let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
     loop {
