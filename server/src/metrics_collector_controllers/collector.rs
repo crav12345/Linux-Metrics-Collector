@@ -92,13 +92,14 @@ mod collector_tests {
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
-        let this_process = Process::myself().unwrap();
+        let this_process = procfs::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = get_cpu_usage(&this_process);
+        let result = crate::collector::get_cpu_usage(&this_process);
 
         // Validate result.
         assert!(result >= 0.0);
+    }
 
     // Test to make sure that the format_memory() function returns the expected values
     #[test]
