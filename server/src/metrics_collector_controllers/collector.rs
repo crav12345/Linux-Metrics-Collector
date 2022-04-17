@@ -89,9 +89,7 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
 
 #[cfg(test)]
 mod collector_tests {
-    use super::*;
-
-    // Ravosa Tests
+    // Test to make sure that the format_memory() function returns the expected values
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
@@ -102,5 +100,18 @@ mod collector_tests {
 
         // Validate result.
         assert!(result >= 0.0);
+
+    fn test_get_memory_usage() {
+        // get process
+        let p1 = procfs::process::all_processes().unwrap();
+        let p2 = p1.first().unwrap();
+        let p3 = p2.to_owned();
+        let result = crate::collector::get_memory_usage(p3);
+
+        // Make sure that the returned metrics have values that make sense
+        assert!(result.0.is_positive());
+        assert!(result.1.len() > 0);
+        assert!(result.2 >= 0);
+        assert!(result.3.len() > 2);
     }
 }

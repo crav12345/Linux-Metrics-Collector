@@ -2,7 +2,7 @@ use rusqlite::{Connection, Result, params};
 use crate::Proc;
 use crate::collector::collect_all_metrics;
 
-pub fn open_database() -> Result<()> {
+pub fn create_database() -> Result<()> {
     // Creates a database if it does not already exist
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
@@ -74,7 +74,6 @@ pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
     Ok(mem_data)
 }
 
-
 /*
 // TODO: PURGE DATABASE (DOES NOT WORK YET)
 pub fn purge_database() -> Result<()> {
@@ -93,15 +92,28 @@ pub fn purge_database() -> Result<()> {
 
 // avoid compiling unless 'cargo test' is entered
 #[cfg(test)]
-mod collector_tests {
+mod database_tests {
+    use std::fs;
+
+    // test to see if database file exists after running create_database()
     #[test]
-    fn test_basic() {
-        assert!(1 == 1);
+    fn test_create_database() {
+        crate::database::create_database();
+        assert!(fs::metadata("src/metrics_collector_controllers/data.db").is_ok(),
+                "db file does not exist");
     }
 
+    // test that store_data() returns ok when trying to insert data into database
     #[test]
-    fn test_equals() {
-        assert_eq!(2, 1 + 1);
-        assert_ne!(2, 1 + 2);
+    fn test_store_data() {
+        let example_process = crate::database::Proc::default();
+        assert!(crate::database::store_data(vec![example_process]).is_ok());
+    }
+
+    // test that get_all_metrics_from_db() returns ok when attempting to pull all entries
+    // from the database
+    #[test]
+    fn test_get_all_metrics_from_db() {
+        assert!(crate::database::get_all_processes_from_db().is_ok());
     }
 }

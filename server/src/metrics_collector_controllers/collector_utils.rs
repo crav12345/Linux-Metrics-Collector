@@ -116,3 +116,16 @@ pub fn format_memory(bytes: i64) -> String {
     }
     return format!("{:.2} B", bytes);
 }
+
+#[cfg(test)]
+mod utils_tests {
+
+    // Test to make sure that the format_memory() function returns the expected values
+    #[test]
+    fn test_format_memory() -> Result<(), String> {
+        assert_eq!(crate::format_memory(1234567), "1.23 MB");
+        assert_eq!(crate::format_memory(1), "1 B");
+        assert_eq!(crate::format_memory(9455000000), "9.46 GB");
+        return Ok(());
+    }
+}
