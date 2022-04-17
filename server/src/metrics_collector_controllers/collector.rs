@@ -101,6 +101,7 @@ mod collector_tests {
         // Validate result.
         assert!(result >= 0.0);
 
+    #[test]
     fn test_get_memory_usage() {
         // get process
         let p1 = procfs::process::all_processes().unwrap();
