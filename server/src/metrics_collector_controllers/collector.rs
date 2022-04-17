@@ -14,19 +14,29 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         // Use default constructor to create "null" process
         let mut new_process = Proc::default();
 
+        // CPU info requires its own thread because it needs to measure usage
+        // over a sample time of 's' seconds. This causes a bottleneck if left
+        // on the same thread.
+        //let handler = thread::spawn(|| {
+        //    return get_cpu_usage(&p);
+        //});
+        // Just made cpu sample time extremely small for now.
+        let cpu_usage = get_cpu_usage(&p);
+
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
-        let cpu_info = get_cpu_usage(p);
 
         // set process object's fields to collected metrics
         new_process.set_pid(memory_info.0);
         new_process.set_pname(memory_info.1);
         new_process.set_threads(memory_info.2);
         new_process.set_pmemory(memory_info.3);
-        new_process.set_cpu_usage(cpu_info);
+        new_process.set_cpu_usage(cpu_usage);
+        //new_process.set_cpu_usage(handler.join().unwrap());
 
         processes.push(new_process);
     }
+
     // print_processes(processes);
     return processes;
 }
@@ -50,7 +60,7 @@ pub fn get_disk_usage(p: procfs::process::Process) {
     let written = p.io().unwrap().write_bytes;
 }
 
-pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
+pub fn get_cpu_usage(p: &procfs::process::Process) -> u64 {
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as u64;
 
@@ -60,7 +70,7 @@ pub fn get_cpu_usage(p: procfs::process::Process) -> u64 {
     let user_mode_time_before = p.stat.utime / ticks_per_second;
 
     // Let the sample time pass.
-    thread::sleep(time::Duration::from_secs(SAMPLE_TIME));
+    thread::sleep(time::Duration::from_millis(SAMPLE_TIME));
 
     // Get amount of time p has been scheduled in kernel mode and user mode
     // again.
@@ -89,7 +99,7 @@ mod collector_tests {
         let this_process = Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = get_cpu_usage(this_process);
+        let result = get_cpu_usage(&this_process);
 
         // Validate result.
         assert!(result >= 0);

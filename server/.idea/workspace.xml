@@ -5,12 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1df675b-25b5-4c23-8a5e-d6fcd972dbd3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/server.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-a5911c8c63ca5160" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-a5911c8c63ca5160" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/server" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +43,24 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Cargo.toml" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
   </component>
+  <component name="RunManager">
+    <configuration name="server" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="server" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="true" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
     <option name="version" value="2" />
@@ -52,5 +75,16 @@
       <updated>1649961692054</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
