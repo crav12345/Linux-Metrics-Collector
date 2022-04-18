@@ -1,13 +1,23 @@
 use std::thread;
 use std::time;
+use actix_web::rt::System;
 use crate::metrics_collector_controllers::collector_utils;
 use procfs::process::Process;
-use procfs::ticks_per_second;
+use procfs::{sys, ticks_per_second};
+use sysinfo::*;
+use sysinfo::Signal::Sys;
 use collector_utils::Proc;
 
-const SAMPLE_TIME: u64 = 1;
+const SAMPLE_TIME: u64 = 500;
 
 pub fn collect_all_metrics() -> Vec<Proc> {
+    let mut sys = sysinfo::System::new_all();
+    let mut disks = sys.disks();
+    let mut disk_space = 0;
+    for disk in disks {
+        disk_space += disk.available_space();
+    }
+
     // Collect Process Info
     let mut processes = Vec::new();
     for p in procfs::process::all_processes().unwrap() {
@@ -22,6 +32,7 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         //});
         // Just made cpu sample time extremely small for now.
         let cpu_usage = get_cpu_usage(&p);
+        let disk_usage = get_disk_usage(&p, disk_space);
 
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
@@ -33,9 +44,12 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         new_process.set_pmemory(memory_info.3);
         new_process.set_cpu_usage(cpu_usage);
         //new_process.set_cpu_usage(handler.join().unwrap());
+        new_process.set_disk_usage(disk_usage);
 
         processes.push(new_process);
     }
+
+    println!("Done");
 
     // print_processes(processes);
     return processes;
@@ -53,13 +67,22 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     return memory_info;
 }
 
-pub fn get_disk_usage(p: procfs::process::Process) {
-    // TODO: Format variables below (format_memory function)
+pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> u64 {
+    // Determine how much space this process is using.
     let read = p.io().unwrap().read_bytes;
+
     let written = p.io().unwrap().write_bytes;
+
+    // Calculate disk usage of this process as a percentage.
+    let disk_usage = (read + written) / disk_space * 100;
+
+    // Kick the percentage of use back up.
+    return disk_usage;
 }
 
 pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
+    // TODO: A way to do this without another thread would be to just check difference w/ 15 second intervals.
+
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as u64;
 
@@ -89,16 +112,37 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
 
 #[cfg(test)]
 mod collector_tests {
+    use sysinfo::{DiskExt, SystemExt};
+
     #[test]
     fn cpu_usage() {
         // Check this program's process ID.
-        let this_process = procfs::Process::myself().unwrap();
+        let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
         let result = crate::collector::get_cpu_usage(&this_process);
 
         // Validate result.
         assert!(result >= 0.0);
+    }
+
+    #[test]
+    fn disk_usage() {
+        let mut sys = sysinfo::System::new_all();
+        let mut disks = sys.disks();
+        let mut disk_space = 0;
+        for disk in disks {
+            disk_space += disk.available_space();
+        }
+
+        // Check this program's process ID.
+        let this_process = procfs::process::Process::myself().unwrap();
+
+        // Get the cpu usage of this process.
+        let result = crate::collector::get_disk_usage(&this_process, disk_space);
+
+        // Validate result.
+        assert!(result >= 0);
     }
 
     // Test to make sure that the format_memory() function returns the expected values

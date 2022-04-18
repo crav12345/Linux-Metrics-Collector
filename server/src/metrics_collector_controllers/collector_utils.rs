@@ -28,7 +28,8 @@ pub struct Proc {
     pub proc_name: String,
     pub num_threads: i64,
     pub proc_mem: String,
-    pub proc_cpu: f32
+    pub proc_cpu: f32,
+    pub proc_disk: u64
 }
 
 impl Default for Proc {
@@ -39,21 +40,23 @@ impl Default for Proc {
             proc_name: "".to_owned(),
             num_threads: 0,
             proc_mem: "".to_owned(),
-            proc_cpu: 0.0
+            proc_cpu: 0.0,
+            proc_disk: 0
         }
     }
 }
 
 impl Proc {
     // Construct process
-    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: f32) -> Proc {
+    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: f32, disk: u64) -> Proc {
         Proc {
             uuid: Uuid::new_v4().to_string(),
             proc_id: id,
             proc_name: name.to_string(),
             num_threads: threads,
             proc_mem: mem.to_string(),
-            proc_cpu: cpu
+            proc_cpu: cpu,
+            proc_disk: disk,
         }
     }
 
@@ -73,7 +76,9 @@ impl Proc {
         self.proc_mem = memory.to_string();
     }
 
-    pub fn set_cpu_usage(&mut self, cpu_usage: f32) { self.proc_cpu = cpu_usage }
+    pub fn set_cpu_usage(&mut self, cpu_usage: f32) { self.proc_cpu = cpu_usage; }
+
+    pub fn set_disk_usage(&mut self, disk_usage: u64) { self.proc_disk = disk_usage; }
 }
 
 /*
@@ -116,6 +121,9 @@ pub fn format_memory(bytes: i64) -> String {
     }
     return format!("{:.2} B", bytes);
 }
+
+// TODO: format_cpu_usage()
+// TODO: format_disk_usage()
 
 #[cfg(test)]
 mod utils_tests {

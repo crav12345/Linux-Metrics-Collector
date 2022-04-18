@@ -16,6 +16,7 @@ pub fn create_database() -> Result<()> {
              num_threads integer not null,
              mem_usage text not null,
              cpu_usage integer not null,
+             disk_usage integer not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
 
@@ -33,9 +34,9 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     for p in processes {
         // Creates process table if it doesn't already exist
         conn.execute(
-            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu],
+            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk],
         )?;
     }
     Ok(())
@@ -62,7 +63,8 @@ pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
             proc_name:row.get(2)?,
             num_threads: row.get(3)?,
             proc_mem: row.get(4)?,
-            proc_cpu: row.get(5)?
+            proc_cpu: row.get(5)?,
+            proc_disk: row.get(6)?
         })
     })?;
 
