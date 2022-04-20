@@ -45,7 +45,7 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
-    // clear the 'current' table of old data
+    // clear the 'current' table of old records
     conn.execute("DELETE FROM current",
                  [])?;
 
@@ -77,7 +77,7 @@ pub fn update_data() {
     let purge: Result<()> = purge_database();
 }
 
-pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
+pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
@@ -140,7 +140,7 @@ mod database_tests {
     // test that get_all_metrics_from_db() returns ok when attempting to pull all entries
     // from the database
     #[test]
-    fn test_get_all_metrics_from_db() {
-        assert!(crate::database::get_all_processes_from_db().is_ok());
+    fn test_get_current_metrics_from_db() {
+        assert!(crate::database::get_current_metrics_from_db().is_ok());
     }
 }
