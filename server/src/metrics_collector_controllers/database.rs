@@ -22,6 +22,21 @@ pub fn create_database() -> Result<()> {
         [],
     )?;
 
+    // Creates current table for storing the most recent info if it doesn't already exist
+    conn.execute(
+        "create table if not exists current (
+             uuid text primary key,
+             process_id integer,
+             process_name text not null,
+             num_threads integer not null,
+             mem_usage text not null,
+             cpu_usage integer not null,
+             date_created DATETIME not null DEFAULT(GETDATE())
+         )",
+
+        [],
+    )?;
+
     Ok(())
 }
 
@@ -30,10 +45,22 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
+    // clear the 'current' table of old records
+    conn.execute("DELETE FROM current",
+                 [])?;
+
+    // Go through each process
     for p in processes {
-        // Creates process table if it doesn't already exist
+        // Stores the process in the 'process' table
         conn.execute(
             "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu],
+        )?;
+
+        // Stores the process in the 'current' table so that current data can be easily retrieved
+        conn.execute(
+            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, date_created)
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, DATETIME())",
             params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu],
         )?;
@@ -47,13 +74,14 @@ pub fn update_data() {
 
     // Send the vector of processes away to be stored in the database
     let store_processes: Result<()> = store_data(processes);
+    let purge: Result<()> = purge_database();
 }
 
-pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
+pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
-    let mut stmt = conn.prepare("SELECT * FROM process")?;
+    let mut stmt = conn.prepare("SELECT * FROM current")?;
 
     let process_iter = stmt.query_map(params![], |row| {
         Ok(Proc {
@@ -74,18 +102,17 @@ pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
     Ok(mem_data)
 }
 
-/*
-// TODO: PURGE DATABASE (DOES NOT WORK YET)
 pub fn purge_database() -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
     conn.execute(
-        "DELETE FROM process WHERE date_created < (DATETIME() - INTERVAL 2 MIN)",
-        NO_PARAMS,
+        "DELETE FROM process WHERE date_created < datetime('now', '-2 days')",
+        [],
     )?;
     Ok(())
-}*/
+}
+
 
 // NOTE: the convention for rust unit tests is that they live in the same file as the
 //       code being tested
@@ -113,7 +140,7 @@ mod database_tests {
     // test that get_all_metrics_from_db() returns ok when attempting to pull all entries
     // from the database
     #[test]
-    fn test_get_all_metrics_from_db() {
-        assert!(crate::database::get_all_processes_from_db().is_ok());
+    fn test_get_current_metrics_from_db() {
+        assert!(crate::database::get_current_metrics_from_db().is_ok());
     }
 }

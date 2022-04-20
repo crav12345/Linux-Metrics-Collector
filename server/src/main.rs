@@ -25,7 +25,7 @@ fn main() {
     let establish_db: Result<()> = database::create_database();
     let fill_database = database::update_data();
 
-    // Initialize scheduler
+    // Initialize scheduler thread
     let mut scheduler = Scheduler::new();
 
     // Have scheduler send current metrics to database every 15 seconds

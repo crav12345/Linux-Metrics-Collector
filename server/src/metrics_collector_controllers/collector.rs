@@ -91,8 +91,9 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
 mod collector_tests {
     #[test]
     fn cpu_usage() {
+        use procfs::process::Process;
         // Check this program's process ID.
-        let this_process = procfs::Process::myself().unwrap();
+        let this_process = Process::myself().unwrap();
 
         // Get the cpu usage of this process.
         let result = crate::collector::get_cpu_usage(&this_process);
