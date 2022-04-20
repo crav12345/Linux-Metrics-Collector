@@ -102,7 +102,6 @@ pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
     Ok(mem_data)
 }
 
-// TODO: PURGE DATABASE (DOES NOT WORK YET)
 pub fn purge_database() -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
@@ -113,6 +112,7 @@ pub fn purge_database() -> Result<()> {
     )?;
     Ok(())
 }
+
 
 // NOTE: the convention for rust unit tests is that they live in the same file as the
 //       code being tested
