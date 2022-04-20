@@ -47,6 +47,7 @@ pub fn update_data() {
 
     // Send the vector of processes away to be stored in the database
     let store_processes: Result<()> = store_data(processes);
+    let purge: Result<()> = purge_database();
 }
 
 pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
@@ -74,18 +75,17 @@ pub fn get_all_processes_from_db() -> Result<Vec<Proc>> {
     Ok(mem_data)
 }
 
-/*
 // TODO: PURGE DATABASE (DOES NOT WORK YET)
 pub fn purge_database() -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
     conn.execute(
-        "DELETE FROM process WHERE date_created < (DATETIME() - INTERVAL 2 MIN)",
-        NO_PARAMS,
+        "DELETE FROM process WHERE date_created < datetime('now', '-2 days')",
+        [],
     )?;
     Ok(())
-}*/
+}
 
 // NOTE: the convention for rust unit tests is that they live in the same file as the
 //       code being tested
