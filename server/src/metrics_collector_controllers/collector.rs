@@ -7,8 +7,9 @@ use procfs::{sys, ticks_per_second};
 use sysinfo::*;
 use sysinfo::Signal::Sys;
 use collector_utils::Proc;
+use crate::format_percent_usage;
 
-const SAMPLE_TIME: u64 = 500;
+const SAMPLE_TIME: i64 = 500;
 
 pub fn collect_all_metrics() -> Vec<Proc> {
     let mut sys = sysinfo::System::new_all();
@@ -67,44 +68,46 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     return memory_info;
 }
 
-pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> u64 {
+pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
     // Determine how much space this process is using.
-    let read = p.io().unwrap().read_bytes;
+    let read = p.io().unwrap().read_bytes as f32;
 
-    let written = p.io().unwrap().write_bytes;
+    let written = p.io().unwrap().write_bytes as f32;
 
     // Calculate disk usage of this process as a percentage.
-    let disk_usage = (read + written) / disk_space * 100;
+    let total_bytes = read + written;
+    let disk_usage = (total_bytes / (disk_space as f32)) * 100.0;
 
     // Kick the percentage of use back up.
-    return disk_usage;
+    return format_percent_usage(disk_usage);
 }
 
 pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
     // TODO: A way to do this without another thread would be to just check difference w/ 15 second intervals.
 
     // Get ticks per second for calculating CPU time.
-    let ticks_per_second = ticks_per_second().unwrap() as u64;
+    let ticks_per_second = ticks_per_second().unwrap();
 
     // Get amount of time p has been scheduled in kernel mode and user mode at
     // this moment.
-    let kernel_mode_time_before = p.stat.stime / ticks_per_second;
-    let user_mode_time_before = p.stat.utime / ticks_per_second;
+    let kernel_mode_time_before = p.stat.stime as i64 / ticks_per_second;
+    let user_mode_time_before = p.stat.utime as i64 / ticks_per_second;
 
     // Let the sample time pass.
-    thread::sleep(time::Duration::from_millis(SAMPLE_TIME));
+    //thread::sleep(time::Duration::from_millis(SAMPLE_TIME));
 
     // Get amount of time p has been scheduled in kernel mode and user mode
     // again.
-    let kernel_mode_time_after = p.stat.stime / ticks_per_second;
-    let user_mode_time_after = p.stat.utime / ticks_per_second;
+    let kernel_mode_time_after = p.stat.stime as i64 / ticks_per_second;
+    let user_mode_time_after = p.stat.utime as i64 / ticks_per_second;
 
-    // Calculate total time in both modes.
+    // Calculate total time in both modes and find their sum.
     let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
     let user_mode_time = user_mode_time_after - user_mode_time_before;
+    let total_time = kernel_mode_time + user_mode_time;
 
     // Calculate total CPU usage over the sample time.
-    let cpu_usage = ((kernel_mode_time + user_mode_time) / SAMPLE_TIME) * 100;
+    let cpu_usage = (total_time / SAMPLE_TIME) as f32 * 100.0;
 
     // Send back the total CPU usage.
     return cpu_usage as f32;
@@ -142,7 +145,7 @@ mod collector_tests {
         let result = crate::collector::get_disk_usage(&this_process, disk_space);
 
         // Validate result.
-        assert!(result >= 0);
+        assert!(result >= 0.0);
     }
 
     // Test to make sure that the format_memory() function returns the expected values

@@ -7,11 +7,11 @@
     <list default="true" id="c27e6f51-f0ac-4e70-ab41-61c11671d21c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/.rustc_info.json" beforeDir="false" afterPath="$PROJECT_DIR$/target/.rustc_info.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" afterDir="false" />
@@ -45,10 +45,27 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="settings.editor.selected.configurable" value="testing.instrumented.configuration" />
   </component>
-  <component name="RunManager" selected="Cargo.Run server">
-    <configuration name="Run server" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-      <option name="command" value="run --package server --bin server" />
+  <component name="RunManager" selected="Cargo.elevated permission">
+    <configuration name="Test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
+      <option name="command" value="test" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="test" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <option name="channel" value="DEFAULT" />
       <option name="requiredFeatures" value="true" />
@@ -81,7 +98,7 @@
     </configuration>
     <list>
       <item itemvalue="Cargo.elevated permission" />
-      <item itemvalue="Cargo.Run server" />
+      <item itemvalue="Cargo.Test" />
     </list>
   </component>
   <component name="RustProjectSettings">
