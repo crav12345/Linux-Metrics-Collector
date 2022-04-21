@@ -9,6 +9,7 @@ use rusqlite::Result;
 use std::time::Duration;
 use std::io::Write;
 use clokwerk::{Scheduler, TimeUnits};
+use convert_case::{Case, Casing};
 //use crate::collector::get_memory_usage;
 
 fn prompt(name:&str) -> String {
@@ -33,10 +34,17 @@ fn main() {
 
     let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
+    println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
     loop {
         let input = prompt("MCC>  ");
         if input=="M" || input=="m" {
-            cli_commands::display_memory_info();
+            cli_commands::display_database_info();
+        } else if input.to_case(Case::Lower) == "cpu" {
+            cli_commands::display_cpu_info();
+        } else if input.to_case(Case::Lower) == "disk" {
+            cli_commands::display_disk_info();
+        } else if input.to_case(Case::Lower) == "help" {
+            cli_commands::display_help_info();
         }
         else if input=="exit" {
             break;
