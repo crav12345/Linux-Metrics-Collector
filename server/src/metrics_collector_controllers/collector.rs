@@ -119,6 +119,7 @@ mod collector_tests {
 
     #[test]
     fn cpu_usage() {
+        use procfs::process::Process;
         // Check this program's process ID.
         let this_process = procfs::process::Process::myself().unwrap();
 
