@@ -82,7 +82,7 @@ pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
     return format_percent_usage(disk_usage);
 }
 
-pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
+pub fn get_cpu_usage(p: &procfs::process::Process) -> String {
     // TODO: A way to do this without another thread would be to just check difference w/ 15 second intervals.
 
     // Get ticks per second for calculating CPU time.
@@ -110,7 +110,7 @@ pub fn get_cpu_usage(p: &procfs::process::Process) -> f32 {
     let cpu_usage = (total_time / SAMPLE_TIME) as f32 * 100.0;
 
     // Send back the total CPU usage.
-    return cpu_usage as f32;
+    return format_percent_usage(cpu_usage);
 }
 
 #[cfg(test)]

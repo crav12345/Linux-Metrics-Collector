@@ -9,13 +9,10 @@
       <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/.rustc_info.json" beforeDir="false" afterPath="$PROJECT_DIR$/target/.rustc_info.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-a5911c8c63ca5160/output-test-bin-server" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-a5911c8c63ca5160" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-a5911c8c63ca5160" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/server" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

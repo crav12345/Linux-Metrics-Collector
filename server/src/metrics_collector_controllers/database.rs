@@ -15,7 +15,7 @@ pub fn create_database() -> Result<()> {
              process_name text not null,
              num_threads integer not null,
              mem_usage text not null,
-             cpu_usage integer not null,
+             cpu_usage text not null,
              disk_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
