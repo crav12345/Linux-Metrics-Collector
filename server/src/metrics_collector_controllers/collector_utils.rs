@@ -128,6 +128,7 @@ pub fn format_percent_usage(usage: f32) -> String {
 
 #[cfg(test)]
 mod utils_tests {
+    use crate::format_percent_usage;
 
     // Test to make sure that the format_memory() function returns the expected values
     #[test]
@@ -136,5 +137,11 @@ mod utils_tests {
         assert_eq!(crate::format_memory(1), "1 B");
         assert_eq!(crate::format_memory(9455000000), "9.46 GB");
         return Ok(());
+    }
+
+    // Test to ensure format_percent_usage() correctly formats f32 values.
+    #[test]
+    fn test_format_percent_usage() -> Result<(), String> {
+        assert_eq!(format_percent_usage(0.233664), "23.36%");
     }
 }

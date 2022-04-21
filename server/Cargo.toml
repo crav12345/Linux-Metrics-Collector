@@ -30,3 +30,6 @@ rust_decimal = "1.22.0"
 clokwerk = "0.3.5"
 
 rusqlite = { version = "0.27.0", features = ["bundled"] }
+
+# For CLI commands.
+convert_case = "0.5.0"
