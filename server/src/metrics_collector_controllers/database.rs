@@ -31,7 +31,8 @@ pub fn create_database() -> Result<()> {
              process_name text not null,
              num_threads integer not null,
              mem_usage text not null,
-             cpu_usage integer not null,
+             cpu_usage text not null,
+             disk_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
 
@@ -61,9 +62,9 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
 
         // Stores the process in the 'current' table so that current data can be easily retrieved
         conn.execute(
-            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu],
+            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage],
         )?;
     }
     Ok(())

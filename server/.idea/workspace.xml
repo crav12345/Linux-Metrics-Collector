@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c27e6f51-f0ac-4e70-ab41-61c11671d21c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-3a430dc14df562f5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/server" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
