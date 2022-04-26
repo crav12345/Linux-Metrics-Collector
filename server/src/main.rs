@@ -24,13 +24,13 @@ fn prompt(name:&str) -> String {
 fn main() {
     // Open the database. Create it if it doesn't exist
     let establish_db: Result<()> = database::create_database();
-    let fill_database = database::update_data();
+    let fill_database = database::update_data(true);
 
     // Initialize scheduler thread
     let mut scheduler = Scheduler::new();
 
     // Have scheduler send current metrics to database every 15 seconds
-    scheduler.every(15.seconds()).run(|| database::update_data());
+    scheduler.every(15.seconds()).run(|| database::update_data(false));
 
     let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
@@ -64,3 +64,5 @@ fn main() {
     */
 
 }
+
+// TODO: Go through all files and make sure no line is > 80 characters.

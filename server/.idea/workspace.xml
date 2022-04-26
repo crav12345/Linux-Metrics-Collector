@@ -6,13 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="c27e6f51-f0ac-4e70-ab41-61c11671d21c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commands/cli_commands.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/commands/cli_commands.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/data.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/bin-server" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-3a430dc14df562f5/output-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/server-7fb7ab88746ce284/output-bin-server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/server-7fb7ab88746ce284/output-bin-server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/deps/server-7fb7ab88746ce284" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/deps/server-7fb7ab88746ce284" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/debug/server" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/server" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +23,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/metrics_collector_controllers/collector_utils.rs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/metrics_collector_controllers/database.rs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/metrics_collector_controllers/collector.rs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="s7b5klf8" />
@@ -42,7 +48,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
-    <property name="settings.editor.selected.configurable" value="testing.instrumented.configuration" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
   </component>
   <component name="RunManager" selected="Cargo.elevated permission">
     <configuration name="Test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">

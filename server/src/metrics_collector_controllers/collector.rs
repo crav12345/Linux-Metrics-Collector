@@ -7,11 +7,12 @@ use procfs::{sys, ticks_per_second};
 use sysinfo::*;
 use sysinfo::Signal::Sys;
 use collector_utils::Proc;
+use crate::database::{get_cpu_usage_by_pid, get_current_metrics_from_db};
 use crate::format_percent_usage;
 
-const SAMPLE_TIME: i64 = 500;
+const SAMPLE_TIME: f32 = 15.0;
 
-pub fn collect_all_metrics() -> Vec<Proc> {
+pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
     let mut sys = sysinfo::System::new_all();
     let mut disks = sys.disks();
     let mut disk_space = 0;
@@ -32,7 +33,7 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         //    return get_cpu_usage(&p);
         //});
         // Just made cpu sample time extremely small for now.
-        let cpu_usage = get_cpu_usage(&p);
+        let cpu_usage = get_cpu_usage(&p, is_first_interval);
         let disk_usage = get_disk_usage(&p, disk_space);
 
         // get memory metrics from get_memory_usage
@@ -43,7 +44,9 @@ pub fn collect_all_metrics() -> Vec<Proc> {
         new_process.set_pname(memory_info.1);
         new_process.set_threads(memory_info.2);
         new_process.set_pmemory(memory_info.3);
-        new_process.set_cpu_usage(cpu_usage);
+        new_process.set_cpu_usage(cpu_usage.0);
+        new_process.set_kernel_mode_time(cpu_usage.1);
+        new_process.set_user_mode_time(cpu_usage.2);
         //new_process.set_cpu_usage(handler.join().unwrap());
         new_process.set_disk_usage(disk_usage);
 
@@ -68,6 +71,8 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
     return memory_info;
 }
 
+// TODO: May need to do this over an interval because you get > 100% usage.
+// TODO: Occasionally a process is not found which causes a crash. Process is likely terminated in middle of method call.
 pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
     // Determine how much space this process is using.
     let read = p.io().unwrap().read_bytes as f32;
@@ -82,35 +87,65 @@ pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
     return format_percent_usage(disk_usage);
 }
 
-pub fn get_cpu_usage(p: &procfs::process::Process) -> String {
-    // TODO: A way to do this without another thread would be to just check difference w/ 15 second intervals.
-
+// TODO: Make tests to see if it works with both first interval and all others.
+// TODO: Total usage is > 100% for some early intervals.
+pub fn get_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (String, f32, f32) {
     // Get ticks per second for calculating CPU time.
-    let ticks_per_second = ticks_per_second().unwrap();
+    let ticks_per_second = ticks_per_second().unwrap() as f32;
 
-    // Get amount of time p has been scheduled in kernel mode and user mode at
-    // this moment.
-    let kernel_mode_time_before = p.stat.stime as i64 / ticks_per_second;
-    let user_mode_time_before = p.stat.utime as i64 / ticks_per_second;
+    // Get how many times the CPU has ticked in 15 seconds.
+    let cpu_time_over_interval = ticks_per_second * SAMPLE_TIME;
 
-    // Let the sample time pass.
-    //thread::sleep(time::Duration::from_millis(SAMPLE_TIME));
+    // Amount of time in kernel mode at last interval.
+    let mut kernel_mode_time_before: f32 = 0.0;
+    let mut user_mode_time_before: f32 = 0.0;
 
-    // Get amount of time p has been scheduled in kernel mode and user mode
-    // again.
-    let kernel_mode_time_after = p.stat.stime as i64 / ticks_per_second;
-    let user_mode_time_after = p.stat.utime as i64 / ticks_per_second;
+    // Amount of time in kernel mode and user mode now.
+    let mut kernel_mode_time_now: f32 = 0.0;
+    let mut user_mode_time_now: f32 = 0.0;
 
-    // Calculate total time in both modes and find their sum.
-    let kernel_mode_time = kernel_mode_time_after - kernel_mode_time_before;
-    let user_mode_time = user_mode_time_after - user_mode_time_before;
-    let total_time = kernel_mode_time + user_mode_time;
+    // Total time in each mode individually.
+    let mut kernel_mode_time: f32 = 0.0;
+    let mut user_mode_time: f32 = 0.0;
 
-    // Calculate total CPU usage over the sample time.
-    let cpu_usage = (total_time / SAMPLE_TIME) as f32 * 100.0;
+    // Total time in both user and kernel mode.
+    let mut total_mode_time: f32 = 0.0;
 
-    // Send back the total CPU usage.
-    return format_percent_usage(cpu_usage);
+    // Total usage.
+    let mut cpu_usage: f32 = 0.0;
+
+    // String to be returned with CPU info.
+    let mut cpu_usage_description: String = "LOADING".to_owned();
+
+    // Only check usage if at least one sample interval has passed.
+    if !is_first_interval {
+        // Query database for this process' user mode and kernel mode time 15 seconds ago.
+        let old_cpu_usage = get_cpu_usage_by_pid(p.pid).unwrap();
+        if old_cpu_usage.len() > 0 {
+            kernel_mode_time_before = old_cpu_usage[0];
+            user_mode_time_before = old_cpu_usage[1];
+        }
+
+        // Get amount of time p has been scheduled in kernel mode and user mode
+        // since the last sample.
+        kernel_mode_time_now = p.stat.stime as f32;
+        user_mode_time_now = p.stat.utime as f32;
+
+        // Calculate total time in both modes and find their sum.
+        kernel_mode_time = kernel_mode_time_now - kernel_mode_time_before;
+        user_mode_time = user_mode_time_now - user_mode_time_before;
+        total_mode_time = kernel_mode_time + user_mode_time;
+
+        // Calculate total CPU usage over the sample time.
+        cpu_usage = (total_mode_time / cpu_time_over_interval)  as f32 * 100.0;
+
+        // Update description to reflect usage as a percent if it is accurate.
+        if cpu_usage <= 100.00 {
+            cpu_usage_description = format_percent_usage(cpu_usage);
+        }
+    }
+
+    return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
 #[cfg(test)]
@@ -124,10 +159,10 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = crate::collector::get_cpu_usage(&this_process);
+        let result = crate::collector::get_cpu_usage(&this_process, false);
 
         // Validate result.
-        assert!(result >= 0.0);
+        assert_eq!(result.0, "LOADING");
     }
 
     #[test]
@@ -146,7 +181,7 @@ mod collector_tests {
         let result = crate::collector::get_disk_usage(&this_process, disk_space);
 
         // Validate result.
-        assert!(result >= 0.0);
+        assert!(result.is_ok());
     }
 
     // Test to make sure that the format_memory() function returns the expected values
