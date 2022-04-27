@@ -1,12 +1,14 @@
+use std::borrow::Borrow;
 use rusqlite::{Connection, Result, params};
 use rusqlite::types::Value;
-use crate::Proc;
+use serde::{Serialize, Deserialize};
+use crate::metrics_collector_controllers::structs::{Proc, Memory};
 use crate::collector::collect_all_metrics;
 
-pub fn create_database() -> Result<()> {
+pub fn establish_connection() -> Connection {
     // Creates a database if it does not already exist
     let path = "src/metrics_collector_controllers/data.db";
-    let conn = Connection::open(&path)?;
+    let conn = Connection::open(&path).unwrap();
 
     // Creates process table if it doesn't already exist
     conn.execute(
@@ -25,7 +27,7 @@ pub fn create_database() -> Result<()> {
          )",
 
         [],
-    )?;
+    );
 
     // Creates current table for storing the most recent info if it doesn't already exist
     conn.execute(
@@ -44,9 +46,9 @@ pub fn create_database() -> Result<()> {
          )",
 
         [],
-    )?;
+    );
 
-    Ok(())
+    return conn
 }
 
 pub fn store_data(processes: Vec<Proc>) -> Result<()> {
@@ -85,6 +87,7 @@ pub fn update_data(is_first_interval: bool) {
     let store_processes: Result<()> = store_data(processes);
     let purge: Result<()> = purge_database();
 }
+
 
 pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
     let path = "src/metrics_collector_controllers/data.db";
@@ -142,6 +145,33 @@ pub fn purge_database() -> Result<()> {
 }
 
 
+pub fn get_current_memory_info() -> Result<String> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn.prepare("SELECT process_id, process_name, num_threads, mem_usage FROM current")?;
+
+    let mut mem_data: Vec<Memory> = Vec::new();
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(Memory {
+            proc_id: row.get(0)?,
+            proc_name:row.get(1)?,
+            num_threads: row.get(2)?,
+            proc_mem: row.get(3)?,
+        })
+    })?;
+
+    for p in process_iter {
+        mem_data.push(p.unwrap());
+    }
+
+    let json = serde_json::to_string_pretty(&mem_data).unwrap();
+
+    Ok(json.to_string())
+}
+
+
 // NOTE: the convention for rust unit tests is that they live in the same file as the
 //       code being tested
 
@@ -152,7 +182,7 @@ mod database_tests {
 
     // test to see if database file exists after running create_database()
     #[test]
-    fn test_create_database() {
+    fn test_establish_connection() {
         crate::database::create_database();
         assert!(fs::metadata("src/metrics_collector_controllers/data.db").is_ok(),
                 "db file does not exist");

@@ -6,7 +6,8 @@ use procfs::process::{FDTarget, Process};
 use procfs::{sys, ticks_per_second};
 use sysinfo::*;
 use sysinfo::Signal::Sys;
-use collector_utils::Proc;
+use crate::metrics_collector_controllers::collector_utils;
+use crate::metrics_collector_controllers::structs::Proc;
 use crate::database::{get_cpu_usage_by_pid, get_current_metrics_from_db};
 use crate::format_percent_usage;
 
@@ -36,7 +37,7 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         let net_usage = get_network_usage(&p, net_data);
 
         // get memory metrics from get_memory_usage
-        let memory_info = get_memory_usage(p);
+        let memory_info = collect_memory_usage(p);
 
         // set process object's fields to collected metrics
         new_process.set_pid(memory_info.0);
@@ -52,13 +53,13 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         processes.push(new_process);
     }
 
-    println!("Done");
 
-    // print_processes(processes);
+    println!("Database Updated");
+
     return processes;
 }
 
-pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, String){
+pub fn collect_memory_usage(p: procfs::process::Process) -> (i32, String, i64, String){
     let id = p.pid;
     let p_memory = p.stat.rss_bytes().unwrap();
     let p_name = p.stat.comm;
@@ -72,10 +73,9 @@ pub fn get_memory_usage(p: procfs::process::Process) -> (i32, String, i64, Strin
 
 // TODO: May need to do this over an interval because you get > 100% usage.
 // TODO: Occasionally a process is not found which causes a crash. Process is likely terminated in middle of method call.
-pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
+pub fn collect_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
     // Determine how much space this process is using.
     let read = p.io().unwrap().read_bytes as f32;
-
     let written = p.io().unwrap().write_bytes as f32;
 
     // Calculate disk usage of this process as a percentage.
@@ -88,7 +88,7 @@ pub fn get_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
 
 // TODO: Make tests to see if it works with both first interval and all others.
 // TODO: Total usage is > 100% for some early intervals. May need to use is_first_interval.
-pub fn get_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (String, f32, f32) {
+pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (String, f32, f32) {
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as f32;
 
@@ -190,7 +190,7 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result_vector = get_cpu_usage(&this_process, false);
+        let result_vector = collect_cpu_usage(&this_process, false);
 
         if result_vector.0 != "LOADING" {
             // Get the amount of CPU usage and convert it to an f32 for comparison.
@@ -228,12 +228,12 @@ mod collector_tests {
 
     // Test to make sure that the format_memory() function returns the expected values
     #[test]
-    fn test_get_memory_usage() {
+    fn test_collect_memory_usage() {
         // get process
         let p1 = procfs::process::all_processes().unwrap();
         let p2 = p1.first().unwrap();
         let p3 = p2.to_owned();
-        let result = get_memory_usage(p3);
+        let result = crate::collector::collect_memory_usage(p3);
 
         // Make sure that the returned metrics have values that make sense
         assert!(result.0.is_positive());

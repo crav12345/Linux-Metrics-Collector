@@ -1,6 +1,3 @@
-use serde::Serialize;
-use uuid::Uuid;
-
 /*
 // Not sure if we are still using this. Might not be needed
 // Device Struct
@@ -77,14 +74,6 @@ impl Proc {
         self.proc_name = pname.to_string();
     }
 
-    pub fn set_threads(&mut self, threads: i64) {
-        self.num_threads = threads;
-    }
-
-    pub fn set_pmemory(&mut self, memory: String) {
-        self.proc_mem = memory.to_string();
-    }
-
     pub fn set_cpu_usage(&mut self, cpu_usage: String) { self.proc_cpu = cpu_usage; }
 
     pub fn set_disk_usage(&mut self, disk_usage: String) { self.proc_disk_usage = disk_usage; }
@@ -141,7 +130,7 @@ pub fn format_memory(bytes: i64) -> String {
 pub fn format_percent_usage(usage: f32) -> String {
     return format!("{:.2}%", usage);
 }
-
+  
 #[cfg(test)]
 mod utils_tests {
     use crate::format_percent_usage;
