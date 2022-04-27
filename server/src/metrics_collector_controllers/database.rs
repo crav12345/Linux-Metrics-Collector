@@ -180,7 +180,7 @@ mod database_tests {
     // test to see if database file exists after running create_database()
     #[test]
     fn test_establish_connection() {
-        crate::database::create_database();
+        crate::database::establish_connection();
         assert!(fs::metadata("src/metrics_collector_controllers/data.db").is_ok(),
                 "db file does not exist");
     }

@@ -143,7 +143,7 @@ pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) 
 #[cfg(test)]
 mod collector_tests {
     use sysinfo::{DiskExt, SystemExt};
-    use crate::collector::{get_disk_usage, get_cpu_usage, get_memory_usage};
+    use crate::collector::{collect_disk_usage, collect_cpu_usage, collect_memory_usage};
 
     #[test]
     fn cpu_usage() {
@@ -179,7 +179,7 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let percent_usage = get_disk_usage(&this_process, disk_space).replace("%","");
+        let percent_usage = collect_disk_usage(&this_process, disk_space).replace("%","");
 
         // Convert the percent usage string to a float.
         let result = percent_usage.parse::<f32>().unwrap();
