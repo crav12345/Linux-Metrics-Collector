@@ -1,7 +1,7 @@
 mod metrics_collector_controllers;
 mod commands;
 
-use metrics_collector_controllers::{collector, collector_utils, database};
+use metrics_collector_controllers::{collector, collector_utils, database, handlers};
 use commands::cli_commands;
 use sysinfo::{DiskExt, System, SystemExt};
 use collector_utils::*;
@@ -11,8 +11,8 @@ use std::io::Write;
 use std::env;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
-//use crate::collector::get_memory_usage;
 use actix_web::{web, get, post, App, HttpServer, HttpResponse, Responder, middleware::Logger};
+use rusqlite::Connection;
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -30,7 +30,8 @@ async fn main() -> std::io::Result<()> {
     let to_run = &args[1];
 
     // Open the database. Create it if it doesn't exist
-    let establish_db: Result<()> = database::create_database();
+    //let establish_db: Result<()> = database::create_database();
+    let conn: Connection = database::establish_connection();
     let fill_database = database::update_data(true);
 
     // Initialize scheduler thread
@@ -62,14 +63,14 @@ async fn main() -> std::io::Result<()> {
     else {
         // Go to 'http://127.0.0.1:8080/' to test routes
         // Start http server
-        HttpServer::new(|| {
+        HttpServer::new(move || {
             // Pass in default logger object
             let logger = Logger::default();
             // Create App Instance
             App::new()
-                .wrap(logger)
-                .service(hello)
-                .route("/hey", web::get().to(manual_hello))
+                //.wrap(logger)
+                .service(handlers::hello)
+                .service(handlers::getCurrentMemInfo)
             //.route("/users", web::get().to(get_users))
             //.route("/users/{id}", web::get().to(get_user_by_id))
             //.route("/users", web::post().to(add_user))
@@ -80,7 +81,7 @@ async fn main() -> std::io::Result<()> {
             .await
     }
 }
-
+/*
 // handler functions for testing api
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -95,5 +96,5 @@ async fn echo(req_body: String) -> impl Responder {
 async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!")
 }
-
+*/
 // TODO: Go through all files and make sure no line is > 80 characters.

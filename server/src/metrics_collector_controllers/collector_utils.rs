@@ -18,8 +18,8 @@ impl Device {
         }
     }
 }
- */
 
+*/
 // Process Struct (Not too sure what line above it does. I'll look into it another time)
 #[derive(Serialize)]
 pub struct Proc {
