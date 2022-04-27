@@ -22,6 +22,7 @@ pub fn establish_connection() -> Connection {
              disk_usage text not null,
              kernel_mode_time integer not null,
              user_mode_time integer not null,
+             net_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
 
@@ -40,6 +41,7 @@ pub fn establish_connection() -> Connection {
              disk_usage text not null,
              kernel_mode_time integer not null,
              user_mode_time integer not null,
+             net_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
 
@@ -62,16 +64,16 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     for p in processes {
         // Stores the process in the 'process' table
         conn.execute(
-            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time],
+            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, net_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_net_usage],
         )?;
 
         // Stores the process in the 'current' table so that current data can be easily retrieved
         conn.execute(
-            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time],
+            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, net_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_net_usage],
         )?;
     }
     Ok(())
@@ -103,7 +105,8 @@ pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
             proc_cpu: row.get(5)?,
             proc_disk_usage: row.get(6)?,
             proc_kernel_mode_time: row.get(7)?,
-            proc_user_mode_time: row.get(8)?
+            proc_user_mode_time: row.get(8)?,
+            proc_net_usage: row.get(9)?
         })
     })?;
 
