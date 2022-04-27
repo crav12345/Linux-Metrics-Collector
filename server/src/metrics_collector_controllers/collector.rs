@@ -2,7 +2,7 @@ use std::thread;
 use std::time;
 //use actix_web::rt::System;
 use crate::metrics_collector_controllers::collector_utils;
-use procfs::process::Process;
+use procfs::process::{FDTarget, Process};
 use procfs::{sys, ticks_per_second};
 use sysinfo::*;
 use sysinfo::Signal::Sys;
@@ -28,6 +28,7 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
 
         let cpu_usage = get_cpu_usage(&p, is_first_interval);
         let disk_usage = get_disk_usage(&p, disk_space);
+        //let net_usage = get_network_usage(&p);
 
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
@@ -141,6 +142,25 @@ pub fn get_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (
 }
 
 // TODO: get_network_usage() method and tests.
+pub fn get_network_usage(p: &procfs::process::Process) {
+    let mut process_inode = 0;
+    if let Ok(fds) = p.fd() {
+        for fd in fds {
+            if let FDTarget::Socket(inode) = fd.target {
+                process_inode = inode;
+            }
+        }
+    }
+
+    // get the tcp table
+    let tcp = procfs::net::tcp().unwrap();
+    let tcp6 = procfs::net::tcp6().unwrap();
+    for entry in tcp.into_iter().chain(tcp6) {
+        if process_inode == entry.inode {
+            println!("Found Process: {:?}, received: {:?}, transmitted: {:?}", p.pid, entry.rx_queue, entry.tx_queue);
+        }
+    }
+}
 
 #[cfg(test)]
 mod collector_tests {
