@@ -25,13 +25,6 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         // Use default constructor to create "null" process
         let mut new_process = Proc::default();
 
-        // CPU info requires its own thread because it needs to measure usage
-        // over a sample time of 's' seconds. This causes a bottleneck if left
-        // on the same thread.
-        //let handler = thread::spawn(|| {
-        //    return get_cpu_usage(&p);
-        //});
-        // Just made cpu sample time extremely small for now.
         let cpu_usage = collect_cpu_usage(&p, is_first_interval);
         let disk_usage = collect_disk_usage(&p, disk_space);
 
@@ -46,7 +39,6 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         new_process.set_cpu_usage(cpu_usage.0);
         new_process.set_kernel_mode_time(cpu_usage.1);
         new_process.set_user_mode_time(cpu_usage.2);
-        //new_process.set_cpu_usage(handler.join().unwrap());
         new_process.set_disk_usage(disk_usage);
 
         processes.push(new_process);
@@ -86,7 +78,7 @@ pub fn collect_disk_usage(p: &procfs::process::Process, disk_space: u64) -> Stri
 }
 
 // TODO: Make tests to see if it works with both first interval and all others.
-// TODO: Total usage is > 100% for some early intervals.
+// TODO: Total usage is > 100% for some early intervals. May need to use is_first_interval.
 pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (String, f32, f32) {
     // Get ticks per second for calculating CPU time.
     let ticks_per_second = ticks_per_second().unwrap() as f32;
@@ -146,9 +138,12 @@ pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) 
     return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
+// TODO: get_network_usage() method and tests.
+
 #[cfg(test)]
 mod collector_tests {
     use sysinfo::{DiskExt, SystemExt};
+    use crate::collector::{get_disk_usage, get_cpu_usage, get_memory_usage};
 
     #[test]
     fn cpu_usage() {
@@ -157,10 +152,18 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = crate::collector::collect_cpu_usage(&this_process, false);
+        let result_vector = collect_cpu_usage(&this_process, false);
 
-        // Validate result.
-        assert_eq!(result.0, "LOADING");
+        if result_vector.0 != "LOADING" {
+            // Get the amount of CPU usage and convert it to an f32 for comparison.
+            let percent_usage = result_vector.0.replace("%", "");
+            let result = percent_usage.parse::<f32>().unwrap();
+
+            assert!(result <= 100.0);
+        } else {
+            // Validate result.
+            assert_eq!(result_vector.0, "LOADING");
+        }
     }
 
     #[test]
@@ -176,10 +179,13 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let result = crate::collector::collect_disk_usage(&this_process, disk_space);
+        let percent_usage = get_disk_usage(&this_process, disk_space).replace("%","");
+
+        // Convert the percent usage string to a float.
+        let result = percent_usage.parse::<f32>().unwrap();
 
         // Validate result.
-        assert!(result.is_ok());
+        assert!(result <= 100.0);
     }
 
     // Test to make sure that the format_memory() function returns the expected values
