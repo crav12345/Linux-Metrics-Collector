@@ -13,7 +13,7 @@ pub fn display_database_info() {
     }
 }
 
-pub fn display_cpu_info() {
+pub fn display_cpu_info() -> f32 {
     let process_info = database::get_current_metrics_from_db();
 
     // String to be parsed into a float.
@@ -45,9 +45,12 @@ pub fn display_cpu_info() {
     }
     // Output the total CPU allocation.
     println!("TOTAL CPU USAGE OVER LAST INTERVAL: {0: <7}", format_percent_usage(total_usage));
+
+    // Send back the total_usage for testing purposes.
+    return total_usage;
 }
 
-pub fn display_disk_info() {
+pub fn display_disk_info() -> f32 {
     let process_info = database::get_current_metrics_from_db();
 
     // String to be parsed into a float.
@@ -76,6 +79,9 @@ pub fn display_disk_info() {
     }
     // Output the total disk allocation.
     println!("TOTAL DISK USAGE OVER LAST INTERVAL: {0: <7}", format_percent_usage(total_usage));
+
+    // Send back total_usage for testing purposes.
+    return total_usage;
 }
 
 pub fn display_help_info() {
@@ -86,4 +92,19 @@ pub fn display_help_info() {
     println!("     Exit -> Quit the application");
 }
 
-// TODO: Tests for display_help, cpu_usage, disk_usage.
+// TODO: display_network_usage() method.
+
+#[cfg(test)]
+mod cli_command_tests {
+    use crate::cli_commands::{display_cpu_info, display_disk_info};
+
+    #[test]
+    fn test_display_cpu_info() {
+        assert!(display_cpu_info() <= 100.0);
+    }
+
+    #[test]
+    fn test_display_disk_info() {
+        assert!(display_disk_info() <= 100.0);
+    }
+}

@@ -149,9 +149,11 @@ mod utils_tests {
         return Ok(());
     }
 
-    // Test to ensure format_percent_usage() correctly formats f32 values.
     #[test]
     fn test_format_percent_usage() -> Result<(), String> {
-        assert_eq!(format_percent_usage(0.233664), "23.36%");
+        assert_eq!(format_percent_usage(23.3664), "23.37%");
+        assert_eq!(format_percent_usage(99.9999), "100.00%");
+        assert_eq!(format_percent_usage(136.1354), "136.14%");
+        return Ok(())
     }
 }
