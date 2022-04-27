@@ -8,9 +8,11 @@ use collector_utils::*;
 use rusqlite::Result;
 use std::time::Duration;
 use std::io::Write;
+use std::env;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
 //use crate::collector::get_memory_usage;
+use actix_web::{web, get, post, App, HttpServer, HttpResponse, Responder, middleware::Logger};
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -21,7 +23,12 @@ fn prompt(name:&str) -> String {
     return line.trim().to_string()
 }
 
-fn main() {
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // collect command line arguments
+    let args: Vec<String> = env::args().collect();
+    let to_run = &args[1];
+
     // Open the database. Create it if it doesn't exist
     let establish_db: Result<()> = database::create_database();
     let fill_database = database::update_data(true);
@@ -34,35 +41,59 @@ fn main() {
 
     let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
-    println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
-    loop {
-        let input = prompt("MCC>  ");
-        if input=="M" || input=="m" {
-            cli_commands::display_database_info();
-        } else if input.to_case(Case::Lower) == "cpu" {
-            cli_commands::display_cpu_info();
-        } else if input.to_case(Case::Lower) == "disk" {
-            cli_commands::display_disk_info();
-        } else if input.to_case(Case::Lower) == "help" {
-            cli_commands::display_help_info();
+    if to_run == "cli" {
+        println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
+        loop {
+            let input = prompt("MCC>  ");
+            if input == "M" || input == "m" {
+                cli_commands::display_database_info();
+            } else if input.to_case(Case::Lower) == "cpu" {
+                cli_commands::display_cpu_info();
+            } else if input.to_case(Case::Lower) == "disk" {
+                cli_commands::display_disk_info();
+            } else if input.to_case(Case::Lower) == "help" {
+                cli_commands::display_help_info();
+            } else if input == "exit" {
+                break;
+            };
         }
-        else if input=="exit" {
-            break;
-        };
+        return Ok(())
     }
-
-    /*
-    let result3: Result<()> = database::purge_database();
-    match result3 {
-        Ok(sk) => {
-
-        }
-        Err(e) => {
-            println!("{}", e);
-        }
+    else {
+        // Go to 'http://127.0.0.1:8080/' to test routes
+        // Start http server
+        HttpServer::new(|| {
+            // Pass in default logger object
+            let logger = Logger::default();
+            // Create App Instance
+            App::new()
+                .wrap(logger)
+                .service(hello)
+                .route("/hey", web::get().to(manual_hello))
+            //.route("/users", web::get().to(get_users))
+            //.route("/users/{id}", web::get().to(get_user_by_id))
+            //.route("/users", web::post().to(add_user))
+            //.route("/users/{id}", web::delete().to(delete_user))
+        })
+            .bind(("127.0.0.1", 8080))?
+            .run()
+            .await
     }
-    */
+}
 
+// handler functions for testing api
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
+
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
 }
 
 // TODO: Go through all files and make sure no line is > 80 characters.

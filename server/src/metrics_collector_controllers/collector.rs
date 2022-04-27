@@ -1,6 +1,6 @@
 use std::thread;
 use std::time;
-use actix_web::rt::System;
+//use actix_web::rt::System;
 use crate::metrics_collector_controllers::collector_utils;
 use procfs::process::Process;
 use procfs::{sys, ticks_per_second};

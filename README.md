@@ -14,18 +14,23 @@ The technologies used to develop this application require development tools them
 * Clone this repository and open it in IntelliJ
   * In the toolbar, click File > Open > ~/.../Metrics-Collector
 
-### Rust Server
+### Rust HTTP Server
 * Setup run configuration for server
   * From the project root, open the 'server/src' directories
   * Select the main.rs file in the project hierarchy
   * In the toolbar, click Run > Edit > Configurations
   * Click "Add a new configuration" > cargo
-  * Name the configuration "server"
+  * Name the configuration "Server"
   * Set the working directory to
     * ~/.../Metrics-Collector/server
   * Check the box that says "Run with root privileges"
 * Click on the Cargo.toml file and click Attach in the top left of IntelliJ
 * Hit Ok and try running the application
+
+### RUST Command Line Server
+* Setup a run configuration for the CLI just as you did for the server, except:
+  * Name it "CLI"
+  * For "Command" enter `run cli`
 
 ### Interacting with the Database
 * Running the server will automatically create a database if it is not there already.
