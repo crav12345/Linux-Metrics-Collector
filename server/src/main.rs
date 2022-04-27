@@ -3,12 +3,13 @@ mod commands;
 
 use metrics_collector_controllers::{collector, collector_utils, database};
 use commands::cli_commands;
-
+use sysinfo::{DiskExt, System, SystemExt};
 use collector_utils::*;
 use rusqlite::Result;
 use std::time::Duration;
 use std::io::Write;
 use clokwerk::{Scheduler, TimeUnits};
+use convert_case::{Case, Casing};
 //use crate::collector::get_memory_usage;
 
 fn prompt(name:&str) -> String {
@@ -23,20 +24,27 @@ fn prompt(name:&str) -> String {
 fn main() {
     // Open the database. Create it if it doesn't exist
     let establish_db: Result<()> = database::create_database();
-    let fill_database = database::update_data();
+    let fill_database = database::update_data(true);
 
     // Initialize scheduler thread
     let mut scheduler = Scheduler::new();
 
     // Have scheduler send current metrics to database every 15 seconds
-    scheduler.every(15.seconds()).run(|| database::update_data());
+    scheduler.every(15.seconds()).run(|| database::update_data(false));
 
     let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
+    println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
     loop {
         let input = prompt("MCC>  ");
         if input=="M" || input=="m" {
-            cli_commands::display_memory_info();
+            cli_commands::display_database_info();
+        } else if input.to_case(Case::Lower) == "cpu" {
+            cli_commands::display_cpu_info();
+        } else if input.to_case(Case::Lower) == "disk" {
+            cli_commands::display_disk_info();
+        } else if input.to_case(Case::Lower) == "help" {
+            cli_commands::display_help_info();
         }
         else if input=="exit" {
             break;
@@ -56,3 +64,5 @@ fn main() {
     */
 
 }
+
+// TODO: Go through all files and make sure no line is > 80 characters.
