@@ -51,6 +51,8 @@ async fn main() -> std::io::Result<()> {
                 cli_commands::display_cpu_info();
             } else if input.to_case(Case::Lower) == "disk" {
                 cli_commands::display_disk_info();
+            } else if input.to_case(Case::Lower) == "net" {
+                cli_commands::display_net_info();
             } else if input.to_case(Case::Lower) == "help" {
                 cli_commands::display_help_info();
             } else if input == "exit" {

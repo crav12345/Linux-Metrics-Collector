@@ -20,6 +20,11 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         disk_space += disk.available_space();
     }
 
+    let mut net_data = 0;
+    for (interface_name, data) in sys.networks() {
+        net_data += data.received() + data.transmitted();
+    }
+
     // Collect Process Info
     let mut processes = Vec::new();
     for p in procfs::process::all_processes().unwrap() {
@@ -28,7 +33,7 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
 
         let cpu_usage = get_cpu_usage(&p, is_first_interval);
         let disk_usage = get_disk_usage(&p, disk_space);
-        //let net_usage = get_network_usage(&p);
+        let net_usage = get_network_usage(&p, net_data);
 
         // get memory metrics from get_memory_usage
         let memory_info = get_memory_usage(p);
@@ -42,6 +47,7 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         new_process.set_kernel_mode_time(cpu_usage.1);
         new_process.set_user_mode_time(cpu_usage.2);
         new_process.set_disk_usage(disk_usage);
+        new_process.set_net_usage(net_usage);
 
         processes.push(new_process);
     }
@@ -141,8 +147,7 @@ pub fn get_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) -> (
     return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
-// TODO: get_network_usage() method and tests.
-pub fn get_network_usage(p: &procfs::process::Process) {
+pub fn get_network_usage(p: &procfs::process::Process, net_data: u64) -> String {
     let mut process_inode = 0;
     if let Ok(fds) = p.fd() {
         for fd in fds {
@@ -152,14 +157,25 @@ pub fn get_network_usage(p: &procfs::process::Process) {
         }
     }
 
+    let mut total_usage: f32 = 0.0;
+    let mut percent_usage: f32 = 0.0;
+
     // get the tcp table
     let tcp = procfs::net::tcp().unwrap();
     let tcp6 = procfs::net::tcp6().unwrap();
     for entry in tcp.into_iter().chain(tcp6) {
         if process_inode == entry.inode {
-            println!("Found Process: {:?}, received: {:?}, transmitted: {:?}", p.pid, entry.rx_queue, entry.tx_queue);
+            total_usage += entry.tx_queue as f32;
+            total_usage += entry.rx_queue as f32;
+
+            if net_data > 0 {
+                if total_usage > 0.0 {
+                    percent_usage = (total_usage / net_data as f32) * 100.0;
+                }
+            }
         }
     }
+    return format_percent_usage(percent_usage);
 }
 
 #[cfg(test)]

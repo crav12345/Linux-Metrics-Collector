@@ -32,6 +32,7 @@ pub struct Proc {
     pub proc_disk_usage: String,
     pub proc_kernel_mode_time: f32,
     pub proc_user_mode_time: f32,
+    pub proc_net_usage: String,
 }
 
 impl Default for Proc {
@@ -46,13 +47,14 @@ impl Default for Proc {
             proc_disk_usage: "".to_owned(),
             proc_kernel_mode_time: 0.0,
             proc_user_mode_time: 0.0,
+            proc_net_usage: "".to_owned(),
         }
     }
 }
 
 impl Proc {
     // Construct process
-    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: &str, disk_usage: &str, kernel_mode_time: f32, user_mode_time: f32) -> Proc {
+    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: &str, disk_usage: &str, kernel_mode_time: f32, user_mode_time: f32, net_usage: &str) -> Proc {
         Proc {
             uuid: Uuid::new_v4().to_string(),
             proc_id: id,
@@ -63,6 +65,7 @@ impl Proc {
             proc_disk_usage: disk_usage.to_string(),
             proc_kernel_mode_time: kernel_mode_time,
             proc_user_mode_time: user_mode_time,
+            proc_net_usage: net_usage.to_string(),
         }
     }
 
@@ -86,9 +89,11 @@ impl Proc {
 
     pub fn set_disk_usage(&mut self, disk_usage: String) { self.proc_disk_usage = disk_usage; }
 
-    pub fn set_kernel_mode_time(&mut self, kernel_mode_time: f32) {self.proc_kernel_mode_time = kernel_mode_time;}
+    pub fn set_kernel_mode_time(&mut self, kernel_mode_time: f32) { self.proc_kernel_mode_time = kernel_mode_time; }
 
-    pub fn set_user_mode_time(&mut self, user_mode_time: f32) {self.proc_user_mode_time = user_mode_time; }
+    pub fn set_user_mode_time(&mut self, user_mode_time: f32) { self.proc_user_mode_time = user_mode_time; }
+
+    pub fn set_net_usage(&mut self, net_usage: String) { self.proc_net_usage = net_usage; }
 }
 
 /*
