@@ -2,7 +2,7 @@ use std::borrow::Borrow;
 use rusqlite::{Connection, Result, params};
 use rusqlite::types::Value;
 use serde::{Serialize, Deserialize};
-use crate::Proc;
+use crate::metrics_collector_controllers::structs::{Proc, Memory};
 use crate::collector::collect_all_metrics;
 
 pub fn establish_connection() -> Connection {
@@ -142,15 +142,7 @@ pub fn purge_database() -> Result<()> {
 }
 
 
-#[derive(Serialize, Deserialize)]
-pub struct Memory {
-    pub proc_id: i32,
-    pub proc_name: String,
-    pub num_threads: i64,
-    pub proc_mem: String
-}
-
-pub fn get_current_meminfo() -> Result<String> {
+pub fn get_current_memory_info() -> Result<String> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
@@ -169,10 +161,8 @@ pub fn get_current_meminfo() -> Result<String> {
 
     for p in process_iter {
         mem_data.push(p.unwrap());
-        //let t = serde_json::to_string(&p.unwrap())?;
     }
-    //let json = serde_json::to_string(&mem_data).unwrap();
-    //println!("{}",json.to_string());
+
     let json = serde_json::to_string_pretty(&mem_data).unwrap();
 
     Ok(json.to_string())

@@ -1,6 +1,5 @@
 mod metrics_collector_controllers;
 mod commands;
-
 use metrics_collector_controllers::{collector, collector_utils, database, handlers};
 use commands::cli_commands;
 use sysinfo::{DiskExt, System, SystemExt};
@@ -71,30 +70,10 @@ async fn main() -> std::io::Result<()> {
                 //.wrap(logger)
                 .service(handlers::hello)
                 .service(handlers::getCurrentMemInfo)
-            //.route("/users", web::get().to(get_users))
-            //.route("/users/{id}", web::get().to(get_user_by_id))
-            //.route("/users", web::post().to(add_user))
-            //.route("/users/{id}", web::delete().to(delete_user))
         })
             .bind(("127.0.0.1", 8080))?
             .run()
             .await
     }
 }
-/*
-// handler functions for testing api
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-*/
 // TODO: Go through all files and make sure no line is > 80 characters.
