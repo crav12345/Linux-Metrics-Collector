@@ -120,6 +120,7 @@ pub fn bytes_to_kb(bytes: u64) -> u64 {
 }
 */
 
+// Format methods.
 pub fn format_memory(bytes: i64) -> String {
     let bytesfloat= bytes as f64;
     if bytes >= 1000000000 {
