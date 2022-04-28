@@ -1,4 +1,5 @@
 use rusqlite::{Connection, Result, params};
+use serde_json::{to_string_pretty};
 use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk};
 use crate::collector::collect_all_metrics;
 
@@ -206,7 +207,7 @@ pub fn get_current_memory_info() -> Result<String> {
     }
 
     // convert vector of results to JSON
-    let json = serde_json::to_string_pretty(&mem_data).unwrap();
+    let json = to_string_pretty(&mem_data).unwrap();
 
     Ok(json.to_string())
 }

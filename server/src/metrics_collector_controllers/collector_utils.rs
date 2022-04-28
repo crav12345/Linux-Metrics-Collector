@@ -1,4 +1,3 @@
-
 pub fn format_memory(bytes: i64) -> String {
     let bytes_float = bytes as f64;
     if bytes >= 1000000000 {
