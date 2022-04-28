@@ -33,7 +33,7 @@ pub fn establish_connection() -> Connection {
         [],
     );
 
-    // Creates current table for storing the most recent info if it doesn't already exist
+    // Creates current table for storing most recent info if it doesn't exist.
     conn.execute(
         "create table if not exists current (
              uuid text primary key,
@@ -72,16 +72,42 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     for p in processes {
         // Stores the process in the 'process' table
         conn.execute(
-            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, bytes_read, bytes_written, disk_usage, kernel_mode_time, user_mode_time, bytes_received, bytes_transmitted, net_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_bytes_received, p.proc_bytes_transmitted, p.proc_net_usage],
+            "INSERT INTO process (
+                uuid, process_id, process_name, num_threads, mem_usage,
+                cpu_usage, bytes_read, bytes_written, disk_usage,
+                kernel_mode_time, user_mode_time, bytes_received,
+                bytes_transmitted, net_usage, date_created
+            ) VALUES (
+                ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14,
+                DATETIME()
+            )",
+            params![
+                p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem,
+                p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written,
+                p.proc_disk_usage, p.proc_kernel_mode_time,
+                p.proc_user_mode_time, p.proc_bytes_received,
+                p.proc_bytes_transmitted, p.proc_net_usage
+            ],
         )?;
 
-        // Stores the process in the 'current' table so that current data can be easily retrieved
+        // Stores process in the 'current' table so that data can be retrieved.
         conn.execute(
-            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, bytes_read, bytes_written, disk_usage, kernel_mode_time, user_mode_time, bytes_received, bytes_transmitted, net_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_bytes_received, p.proc_bytes_transmitted, p.proc_net_usage],
+            "INSERT INTO current (
+                uuid, process_id, process_name, num_threads, mem_usage,
+                cpu_usage, bytes_read, bytes_written, disk_usage,
+                kernel_mode_time, user_mode_time, bytes_received,
+                bytes_transmitted, net_usage, date_created
+             ) VALUES (
+                ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14,
+                DATETIME()
+             )",
+            params![
+                p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem,
+                p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written,
+                p.proc_disk_usage, p.proc_kernel_mode_time,
+                p.proc_user_mode_time, p.proc_bytes_received,
+                p.proc_bytes_transmitted, p.proc_net_usage
+            ],
         )?;
     }
     Ok(())
@@ -161,7 +187,11 @@ pub fn get_current_memory_info() -> Result<String> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
-    let mut stmt = conn.prepare("SELECT process_id, process_name, num_threads, mem_usage FROM current")?;
+    let mut stmt = conn
+        .prepare(
+            "SELECT process_id, process_name, num_threads, mem_usage \
+            FROM current"
+        )?;
 
     let mut mem_data: Vec<Memory> = Vec::new();
 
@@ -189,7 +219,8 @@ pub fn get_current_disk_info() -> Result<String> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
-    let mut stmt = conn.prepare("SELECT process_id, process_name, disk_usage FROM current")?;
+    let mut stmt = conn
+        .prepare("SELECT process_id, process_name, disk_usage FROM current")?;
 
     let mut disk_data: Vec<Disk> = Vec::new();
 
@@ -212,32 +243,24 @@ pub fn get_current_disk_info() -> Result<String> {
     Ok(json.to_string())
 }
 
-
-// NOTE: the convention for rust unit tests is that they live in the same file as the
-//       code being tested
-
-// avoid compiling unless 'cargo test' is entered
 #[cfg(test)]
 mod database_tests {
     use std::fs;
 
-    // test to see if database file exists after running create_database()
     #[test]
     fn test_establish_connection() {
         crate::database::establish_connection();
-        assert!(fs::metadata("src/metrics_collector_controllers/data.db").is_ok(),
-                "db file does not exist");
+        assert!(fs::metadata(
+            "src/metrics_collector_controllers/data.db"
+        ).is_ok(), "db file does not exist");
     }
 
-    // test that store_data() returns ok when trying to insert data into database
     #[test]
     fn test_store_data() {
         let example_process = crate::database::Proc::default();
         assert!(crate::database::store_data(vec![example_process]).is_ok());
     }
 
-    // test that get_all_metrics_from_db() returns ok when attempting to pull all entries
-    // from the database
     #[test]
     fn test_get_current_metrics_from_db() {
         assert!(crate::database::get_current_metrics_from_db().is_ok());

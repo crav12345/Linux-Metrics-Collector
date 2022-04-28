@@ -1,6 +1,8 @@
 mod metrics_collector_controllers;
 mod commands;
-use metrics_collector_controllers::{collector, collector_utils, database, handlers};
+use metrics_collector_controllers::{
+    collector, collector_utils, database, handlers
+};
 use commands::cli_commands;
 use sysinfo::{DiskExt, System, SystemExt};
 use collector_utils::*;
@@ -10,14 +12,19 @@ use std::io::Write;
 use std::env;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
-use actix_web::{web, get, post, App, HttpServer, HttpResponse, Responder, middleware::Logger};
+use actix_web::{
+    web, get, post, App, HttpServer, HttpResponse, Responder,
+    middleware::Logger
+};
 use rusqlite::Connection;
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
     print!("{}", name);
     std::io::stdout().flush().unwrap();
-    std::io::stdin().read_line(&mut line).expect("Error: Could not read a line");
+    std::io::stdin()
+        .read_line(&mut line)
+        .expect("Error: Could not read a line");
 
     return line.trim().to_string()
 }
@@ -79,4 +86,3 @@ async fn main() -> std::io::Result<()> {
             .await
     }
 }
-// TODO: Go through all files and make sure no line is > 80 characters.
