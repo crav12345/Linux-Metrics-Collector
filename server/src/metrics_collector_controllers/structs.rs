@@ -47,44 +47,19 @@ impl Default for Proc {
 }
 
 impl Proc {
-    // Construct process
-    pub fn new(
-        id: i32, name: &str, threads: i64, mem: &str, cpu: &str,
-        bytes_read: &str, bytes_written: &str, disk_usage: &str,
-        kernel_mode_time: f32, user_mode_time: f32, bytes_received: &str,
-        bytes_transmitted: &str, net_usage: &str
-    ) -> Proc {
-        Proc {
-            uuid: Uuid::new_v4().to_string(),
-            proc_id: id,
-            proc_name: name.to_string(),
-            num_threads: threads,
-            proc_mem: mem.to_string(),
-            proc_cpu: cpu.to_string(),
-            proc_bytes_read: bytes_read.to_string(),
-            proc_bytes_written: bytes_written.to_string(),
-            proc_disk_usage: disk_usage.to_string(),
-            proc_kernel_mode_time: kernel_mode_time,
-            proc_user_mode_time: user_mode_time,
-            proc_bytes_received: bytes_received.to_string(),
-            proc_bytes_transmitted: bytes_transmitted.to_string(),
-            proc_net_usage: net_usage.to_string(),
-        }
-    }
-
     pub fn set_pid(&mut self, pid: i32) {
         self.proc_id = pid;
     }
 
-    pub fn set_pname(&mut self, pname: String) {
-        self.proc_name = pname.to_string();
+    pub fn set_name(&mut self, name: String) {
+        self.proc_name = name.to_string();
     }
 
     pub fn set_threads(&mut self, threads: i64) {
         self.num_threads = threads;
     }
 
-    pub fn set_pmemory(&mut self, memory: String) {
+    pub fn set_memory(&mut self, memory: String) {
         self.proc_mem = memory.to_string();
     }
 

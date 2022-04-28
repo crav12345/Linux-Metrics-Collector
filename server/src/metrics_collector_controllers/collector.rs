@@ -1,26 +1,22 @@
-use std::thread;
-use std::time;
-use crate::metrics_collector_controllers::collector_utils;
 use procfs::process::{FDTarget, Process};
-use procfs::{sys, ticks_per_second};
-use sysinfo::*;
-use sysinfo::Signal::Sys;
+use procfs::ticks_per_second;
+use sysinfo::{DiskExt, NetworkExt, System, SystemExt};
 use crate::metrics_collector_controllers::structs::Proc;
-use crate::database::{get_cpu_usage_by_pid, get_current_metrics_from_db};
+use crate::database::get_cpu_usage_by_pid;
 use crate::{format_memory, format_percent_usage};
 
 const SAMPLE_TIME: f32 = 15.0;
 
 pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
-    let mut sys = sysinfo::System::new_all();
-    let mut disks = sys.disks();
+    let sys = System::new_all();
+    let disks = sys.disks();
     let mut disk_space = 0;
     for disk in disks {
         disk_space += disk.available_space();
     }
 
     let mut net_data = 0;
-    for (interface_name, data) in sys.networks() {
+    for (_interface_name, data) in sys.networks() {
         net_data += data.received() + data.transmitted();
     }
 
@@ -39,9 +35,9 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
 
         // set process object's fields to collected metrics
         new_process.set_pid(memory_info.0);
-        new_process.set_pname(memory_info.1);
+        new_process.set_name(memory_info.1);
         new_process.set_threads(memory_info.2);
-        new_process.set_pmemory(memory_info.3);
+        new_process.set_memory(memory_info.3);
         new_process.set_cpu_usage(cpu_usage.0);
         new_process.set_kernel_mode_time(cpu_usage.1);
         new_process.set_user_mode_time(cpu_usage.2);
@@ -66,7 +62,7 @@ pub fn collect_memory_usage(p: Process) -> (i32, String, i64, String) {
     let p_memory = p.stat.rss_bytes().unwrap();
     let p_name = p.stat.comm;
     let num_threads = p.stat.num_threads;
-    let mem_usage = collector_utils::format_memory(p_memory);
+    let mem_usage = format_memory(p_memory);
 
     return (id, p_name, num_threads, mem_usage);
 }
@@ -111,16 +107,6 @@ pub fn collect_cpu_usage(p: &Process, is_first_interval: bool) -> (
     let mut kernel_mode_time_now: f32 = 0.0;
     let mut user_mode_time_now: f32 = 0.0;
 
-    // Total time in each mode individually.
-    let mut kernel_mode_time: f32 = 0.0;
-    let mut user_mode_time: f32 = 0.0;
-
-    // Total time in both user and kernel mode.
-    let mut total_mode_time: f32 = 0.0;
-
-    // Total usage.
-    let mut cpu_usage: f32 = 0.0;
-
     // String to be returned with CPU info.
     let mut cpu_usage_description: String = "LOADING".to_owned();
 
@@ -140,12 +126,12 @@ pub fn collect_cpu_usage(p: &Process, is_first_interval: bool) -> (
         user_mode_time_now = p.stat.utime as f32;
 
         // Calculate total time in both modes and find their sum.
-        kernel_mode_time = kernel_mode_time_now - kernel_mode_time_before;
-        user_mode_time = user_mode_time_now - user_mode_time_before;
-        total_mode_time = kernel_mode_time + user_mode_time;
+        let kernel_mode_time = kernel_mode_time_now - kernel_mode_time_before;
+        let user_mode_time = user_mode_time_now - user_mode_time_before;
+        let total_mode_time = kernel_mode_time + user_mode_time;
 
         // Calculate total CPU usage over the sample time.
-        cpu_usage = (total_mode_time / cpu_time_over_interval) as f32 * 100.0;
+        let cpu_usage = (total_mode_time / cpu_time_over_interval) as f32 * 100.0;
 
         // Update description to reflect usage as a percent if it is accurate.
         if cpu_usage <= 100.00 {
@@ -206,7 +192,7 @@ mod collector_tests {
     fn cpu_usage() {
         use procfs::process::Process;
         // Check this program's process ID.
-        let this_process = procfs::process::Process::myself().unwrap();
+        let this_process = Process::myself().unwrap();
 
         // Get the cpu usage of this process.
         let result_vector = collect_cpu_usage(&this_process, false);
@@ -252,7 +238,7 @@ mod collector_tests {
         let p1 = procfs::process::all_processes().unwrap();
         let p2 = p1.first().unwrap();
         let p3 = p2.to_owned();
-        let result = crate::collector::collect_memory_usage(p3);
+        let result = collect_memory_usage(p3);
 
         // Make sure that the returned metrics have values that make sense.
         assert!(result.0.is_positive());

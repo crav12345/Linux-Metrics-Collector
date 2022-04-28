@@ -1,11 +1,8 @@
-use std::borrow::Borrow;
 use rusqlite::{Connection, Result, params};
-use rusqlite::types::Value;
-use serde::{Serialize, Deserialize};
 use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk};
 use crate::collector::collect_all_metrics;
 
-pub fn establish_connection() -> Connection {
+pub fn establish_connection() -> Result<()> {
     // Creates a database if it does not already exist
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path).unwrap();
@@ -31,7 +28,7 @@ pub fn establish_connection() -> Connection {
          )",
 
         [],
-    );
+    )?;
 
     // Creates current table for storing most recent info if it doesn't exist.
     conn.execute(
@@ -54,9 +51,8 @@ pub fn establish_connection() -> Connection {
          )",
 
         [],
-    );
-
-    return conn
+    )?;
+    Ok(())
 }
 
 pub fn store_data(processes: Vec<Proc>) -> Result<()> {
@@ -118,8 +114,8 @@ pub fn update_data(is_first_interval: bool) {
     let processes: Vec<Proc> = collect_all_metrics(is_first_interval);
 
     // Send the vector of processes away to be stored in the database
-    let store_processes: Result<()> = store_data(processes);
-    let purge: Result<()> = purge_database();
+    let _store_processes = store_data(processes);
+    let _purge = purge_database();
 }
 
 
