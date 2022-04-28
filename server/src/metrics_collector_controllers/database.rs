@@ -2,7 +2,7 @@ use std::borrow::Borrow;
 use rusqlite::{Connection, Result, params};
 use rusqlite::types::Value;
 use serde::{Serialize, Deserialize};
-use crate::metrics_collector_controllers::structs::{Proc, Memory};
+use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk};
 use crate::collector::collect_all_metrics;
 
 pub fn establish_connection() -> Connection {
@@ -162,11 +162,40 @@ pub fn get_current_memory_info() -> Result<String> {
         })
     })?;
 
+    // iterate through collected results to push each one to vector
     for p in process_iter {
         mem_data.push(p.unwrap());
     }
 
+    // convert vector of results to JSON
     let json = serde_json::to_string_pretty(&mem_data).unwrap();
+
+    Ok(json.to_string())
+}
+
+pub fn get_current_disk_info() -> Result<String> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn.prepare("SELECT process_id, process_name, disk_usage FROM current")?;
+
+    let mut disk_data: Vec<Disk> = Vec::new();
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(Disk {
+            proc_id: row.get(0)?,
+            proc_name:row.get(1)?,
+            proc_disk_usage: row.get(2)?,
+        })
+    })?;
+
+    // iterate through collected results to push each one to vector
+    for p in process_iter {
+        disk_data.push(p.unwrap());
+    }
+
+    // convert vector of results to JSON
+    let json = serde_json::to_string_pretty(&disk_data).unwrap();
 
     Ok(json.to_string())
 }

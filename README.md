@@ -14,7 +14,7 @@ The technologies used to develop this application require development tools them
 * Clone this repository and open it in IntelliJ
   * In the toolbar, click File > Open > ~/.../Metrics-Collector
 
-### Rust HTTP Server
+### Rust HTTP Server (From IntelliJ)
 * Setup run configuration for server
   * From the project root, open the 'server/src' directories
   * Select the main.rs file in the project hierarchy
@@ -27,10 +27,18 @@ The technologies used to develop this application require development tools them
 * Click on the Cargo.toml file and click Attach in the top left of IntelliJ
 * Hit Ok and try running the application
 
-### RUST Command Line Server
+### RUST Command Line Server (From IntelliJ)
 * Setup a run configuration for the CLI just as you did for the server, except:
   * Name it "CLI"
   * For "Command" enter `run cli`
+
+### Run Program From Command Line
+* From root directory: `cd server`
+* `cargo build`
+* To use command line interface version of app:
+  * `sudo ./target/debug/server cli`
+* To use gui version of app:
+  * `sudo ./target/debug/server server`
 
 ### Interacting with the Database
 * Running the server will automatically create a database if it is not there already.

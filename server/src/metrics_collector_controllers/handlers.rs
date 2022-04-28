@@ -1,6 +1,6 @@
 use actix_web::{HttpResponse, Responder, get};
 use serde::{Serialize, Deserialize};
-use crate::database::get_current_memory_info;
+use crate::database::{get_current_memory_info, get_current_disk_info};
 use crate::metrics_collector_controllers::structs::{Memory};
 
 // handler functions for testing api
@@ -13,4 +13,10 @@ pub async fn hello() -> impl Responder {
 pub async fn getCurrentMemInfo() -> impl Responder {
     let memory_info = get_current_memory_info();
     HttpResponse::Ok().body(memory_info.unwrap())
+}
+
+#[get("/disk")]
+pub async fn getCurrentDiskInfo() -> impl Responder {
+    let diskInfo = get_current_disk_info();
+    HttpResponse::Ok().body(diskInfo.unwrap())
 }

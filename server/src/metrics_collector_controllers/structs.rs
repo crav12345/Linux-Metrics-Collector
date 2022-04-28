@@ -93,6 +93,13 @@ pub struct Memory {
     pub proc_mem: String
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Disk {
+    pub proc_id: i32,
+    pub proc_name: String,
+    pub proc_disk_usage: String
+}
+
 /*
 // Not sure if we are still using this. Might not be needed
 // Device Struct
