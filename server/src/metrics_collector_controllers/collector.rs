@@ -6,7 +6,6 @@ use procfs::process::{FDTarget, Process};
 use procfs::{sys, ticks_per_second};
 use sysinfo::*;
 use sysinfo::Signal::Sys;
-use crate::metrics_collector_controllers::collector_utils;
 use crate::metrics_collector_controllers::structs::Proc;
 use crate::database::{get_cpu_usage_by_pid, get_current_metrics_from_db};
 use crate::format_percent_usage;
@@ -32,9 +31,9 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         // Use default constructor to create "null" process
         let mut new_process = Proc::default();
 
-        let cpu_usage = get_cpu_usage(&p, is_first_interval);
-        let disk_usage = get_disk_usage(&p, disk_space);
-        let net_usage = get_network_usage(&p, net_data);
+        let cpu_usage = collect_cpu_usage(&p, is_first_interval);
+        let disk_usage = collect_disk_usage(&p, disk_space);
+        let net_usage = collect_network_usage(&p, net_data);
 
         // get memory metrics from get_memory_usage
         let memory_info = collect_memory_usage(p);
@@ -147,7 +146,7 @@ pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) 
     return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
-pub fn get_network_usage(p: &procfs::process::Process, net_data: u64) -> String {
+pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> String {
     let mut process_inode = 0;
     if let Ok(fds) = p.fd() {
         for fd in fds {
