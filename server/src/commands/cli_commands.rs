@@ -97,7 +97,7 @@ pub fn display_net_info() -> f32 {
     let mut total_usage: f32 = 0.0;
 
     println!("{0: <7} | {1: <43} |{2: <7}", "PID", "NAME", "NETWORK");
-    println!("---------------------------------------------------------");
+    println!("--------------------------------------------------------------");
     for p in process_info.unwrap() {
         // Get the percent usage string.
         percent_usage_string = p.proc_net_usage.replace("%", "");
