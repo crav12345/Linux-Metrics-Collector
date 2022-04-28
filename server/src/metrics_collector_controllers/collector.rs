@@ -50,7 +50,7 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
     return processes;
 }
 
-pub fn collect_memory_usage(p: procfs::process::Process) -> (i32, String, i64, String){
+pub fn collect_memory_usage(p: procfs::process::Process) -> (i32, String, i64, String) {
     let id = p.pid;
     let p_memory = p.stat.rss_bytes().unwrap();
     let p_name = p.stat.comm;
@@ -127,7 +127,7 @@ pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) 
         total_mode_time = kernel_mode_time + user_mode_time;
 
         // Calculate total CPU usage over the sample time.
-        cpu_usage = (total_mode_time / cpu_time_over_interval)  as f32 * 100.0;
+        cpu_usage = (total_mode_time / cpu_time_over_interval) as f32 * 100.0;
 
         // Update description to reflect usage as a percent if it is accurate.
         if cpu_usage <= 100.00 {
@@ -179,7 +179,7 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let percent_usage = collect_disk_usage(&this_process, disk_space).replace("%","");
+        let percent_usage = collect_disk_usage(&this_process, disk_space).replace("%", "");
 
         // Convert the percent usage string to a float.
         let result = percent_usage.parse::<f32>().unwrap();
