@@ -1,23 +1,27 @@
 mod metrics_collector_controllers;
 mod commands;
-use metrics_collector_controllers::{collector, collector_utils, database, handlers};
+use metrics_collector_controllers::{
+    collector, collector_utils, database, handlers
+};
 use commands::cli_commands;
-use sysinfo::{DiskExt, System, SystemExt};
 use collector_utils::*;
-use rusqlite::Result;
 use std::time::Duration;
 use std::io::Write;
 use std::env;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
-use actix_web::{web, get, post, App, HttpServer, HttpResponse, Responder, middleware::Logger};
-use rusqlite::Connection;
+use actix_web::{
+    App, HttpServer,
+    middleware::Logger
+};
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
     print!("{}", name);
     std::io::stdout().flush().unwrap();
-    std::io::stdin().read_line(&mut line).expect("Error: Could not read a line");
+    std::io::stdin()
+        .read_line(&mut line)
+        .expect("Error: Could not read a line");
 
     return line.trim().to_string()
 }
@@ -29,9 +33,8 @@ async fn main() -> std::io::Result<()> {
     let to_run = &args[1];
 
     // Open the database. Create it if it doesn't exist
-    //let establish_db: Result<()> = database::create_database();
-    let conn: Connection = database::establish_connection();
-    let fill_database = database::update_data(true);
+    let _conn = database::establish_connection();
+    database::update_data(true);
 
     // Initialize scheduler thread
     let mut scheduler = Scheduler::new();
@@ -39,7 +42,7 @@ async fn main() -> std::io::Result<()> {
     // Have scheduler send current metrics to database every 15 seconds
     scheduler.every(15.seconds()).run(|| database::update_data(false));
 
-    let thread_handle = scheduler.watch_thread(Duration::from_millis(100));
+    let _thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
     if to_run == "cli" {
         println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
@@ -66,17 +69,16 @@ async fn main() -> std::io::Result<()> {
         // Start http server
         HttpServer::new(move || {
             // Pass in default logger object
-            let logger = Logger::default();
+            Logger::default();
             // Create App Instance
             App::new()
                 //.wrap(logger)
                 .service(handlers::hello)
-                .service(handlers::getCurrentMemInfo)
-                .service(handlers::getCurrentDiskInfo)
+                .service(handlers::current_mem_info)
+                .service(handlers::current_disk_info)
         })
             .bind(("127.0.0.1", 8080))?
             .run()
             .await
     }
 }
-// TODO: Go through all files and make sure no line is > 80 characters.
