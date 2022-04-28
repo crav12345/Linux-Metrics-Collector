@@ -72,6 +72,7 @@ async fn main() -> std::io::Result<()> {
                 //.wrap(logger)
                 .service(handlers::hello)
                 .service(handlers::getCurrentMemInfo)
+                .service(handlers::getCurrentDiskInfo)
         })
             .bind(("127.0.0.1", 8080))?
             .run()
