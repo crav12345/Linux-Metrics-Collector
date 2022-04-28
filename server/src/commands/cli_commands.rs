@@ -6,10 +6,10 @@ use crate::metrics_collector_controllers::collector_utils;
 pub fn display_database_info() {
     let process_info = database::get_current_metrics_from_db();
 
-    println!("{0: <7} | {1: <43} | {2: <10} | {3: <7} | {4: <7} | {5: <7}","PID", "NAME", "MEMORY", "CPU", "DISK", "NETWORK");
-    println!("________________________________________________________________________________________________");
+    println!("{0: <7} | {1: <43} | {2: <10} | {3: <7} | {4: <10} | {5: <10} | {6: <7} | {7: <11} | {8: <11} | {9: <7}","PID", "NAME", "MEMORY", "CPU", "READ", "WRITTEN", "DISK", "RECEIVED", "TRANSMITTED", "NETWORK");
+    println!("______________________________________________________________________________________________________________________________________________________");
     for p in process_info.unwrap() {
-        println!("{0: <7} | {1: <43} | {2: <10} | {3: <7} | {4: <7} | {5: <7}", p.proc_id, p.proc_name, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_net_usage);
+        println!("{0: <7} | {1: <43} | {2: <10} | {3: <7} | {4: <10} | {5: <10} | {6: <7} | {7: <11} | {8: <11} | {9: <7}", p.proc_id, p.proc_name, p.proc_mem, p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written, p.proc_disk_usage, p.proc_bytes_received, p.proc_bytes_transmitted, p.proc_net_usage);
     }
 }
 

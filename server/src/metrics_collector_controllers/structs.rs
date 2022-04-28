@@ -15,9 +15,13 @@ pub struct Proc {
     pub num_threads: i64,
     pub proc_mem: String,
     pub proc_cpu: String,
+    pub proc_bytes_read: String,
+    pub proc_bytes_written: String,
     pub proc_disk_usage: String,
     pub proc_kernel_mode_time: f32,
     pub proc_user_mode_time: f32,
+    pub proc_bytes_received: String,
+    pub proc_bytes_transmitted: String,
     pub proc_net_usage: String,
 }
 
@@ -30,9 +34,13 @@ impl Default for Proc {
             num_threads: 0,
             proc_mem: "".to_owned(),
             proc_cpu: "".to_owned(),
+            proc_bytes_read: "".to_owned(),
+            proc_bytes_written: "".to_owned(),
             proc_disk_usage: "".to_owned(),
             proc_kernel_mode_time: 0.0,
             proc_user_mode_time: 0.0,
+            proc_bytes_received: "".to_owned(),
+            proc_bytes_transmitted: "".to_owned(),
             proc_net_usage: "".to_owned(),
         }
     }
@@ -40,7 +48,7 @@ impl Default for Proc {
 
 impl Proc {
     // Construct process
-    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: &str, disk_usage: &str, kernel_mode_time: f32, user_mode_time: f32, net_usage: &str) -> Proc {
+    pub fn new(uuid: String, id: i32, name: &str, threads: i64, mem: &str, cpu: &str, bytes_read: &str, bytes_written: &str, disk_usage: &str, kernel_mode_time: f32, user_mode_time: f32, bytes_received: &str, bytes_transmitted: &str, net_usage: &str) -> Proc {
         Proc {
             uuid: Uuid::new_v4().to_string(),
             proc_id: id,
@@ -48,9 +56,13 @@ impl Proc {
             num_threads: threads,
             proc_mem: mem.to_string(),
             proc_cpu: cpu.to_string(),
+            proc_bytes_read: bytes_read.to_string(),
+            proc_bytes_written: bytes_written.to_string(),
             proc_disk_usage: disk_usage.to_string(),
             proc_kernel_mode_time: kernel_mode_time,
             proc_user_mode_time: user_mode_time,
+            proc_bytes_received: bytes_received.to_string(),
+            proc_bytes_transmitted: bytes_transmitted.to_string(),
             proc_net_usage: net_usage.to_string(),
         }
     }
@@ -75,6 +87,10 @@ impl Proc {
         self.proc_cpu = cpu_usage;
     }
 
+    pub fn set_bytes_read(&mut self, bytes_read: String) { self.proc_bytes_read = bytes_read; }
+
+    pub fn set_bytes_written(&mut self, bytes_written: String) { self.proc_bytes_written = bytes_written; }
+
     pub fn set_disk_usage(&mut self, disk_usage: String) {
         self.proc_disk_usage = disk_usage;
     }
@@ -86,6 +102,10 @@ impl Proc {
     pub fn set_user_mode_time(&mut self, user_mode_time: f32) {
         self.proc_user_mode_time = user_mode_time;
     }
+
+    pub fn set_bytes_received(&mut self, bytes_received: String) { self.proc_bytes_received = bytes_received; }
+
+    pub fn set_bytes_transmitted(&mut self, bytes_transmitted: String) { self.proc_bytes_transmitted = bytes_transmitted; }
 
     pub fn set_net_usage(&mut self, net_usage: String) {
         self.proc_net_usage = net_usage;

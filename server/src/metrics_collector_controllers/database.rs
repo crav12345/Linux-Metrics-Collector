@@ -19,9 +19,13 @@ pub fn establish_connection() -> Connection {
              num_threads integer not null,
              mem_usage text not null,
              cpu_usage text not null,
+             bytes_read integer not null,
+             bytes_written integer not null,
              disk_usage text not null,
              kernel_mode_time integer not null,
              user_mode_time integer not null,
+             bytes_received integer not null,
+             bytes_transmitted integer not null,
              net_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
@@ -38,9 +42,13 @@ pub fn establish_connection() -> Connection {
              num_threads integer not null,
              mem_usage text not null,
              cpu_usage text not null,
+             bytes_read text not null,
+             bytes_written text not null,
              disk_usage text not null,
              kernel_mode_time integer not null,
              user_mode_time integer not null,
+             bytes_received text not null,
+             bytes_transmitted text not null,
              net_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
@@ -64,16 +72,16 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     for p in processes {
         // Stores the process in the 'process' table
         conn.execute(
-            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, net_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_net_usage],
+            "INSERT INTO process (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, bytes_read, bytes_written, disk_usage, kernel_mode_time, user_mode_time, bytes_received, bytes_transmitted, net_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_bytes_received, p.proc_bytes_transmitted, p.proc_net_usage],
         )?;
 
         // Stores the process in the 'current' table so that current data can be easily retrieved
         conn.execute(
-            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, disk_usage, kernel_mode_time, user_mode_time, net_usage, date_created)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, DATETIME())",
-            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_net_usage],
+            "INSERT INTO current (uuid, process_id, process_name, num_threads, mem_usage, cpu_usage, bytes_read, bytes_written, disk_usage, kernel_mode_time, user_mode_time, bytes_received, bytes_transmitted, net_usage, date_created)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, DATETIME())",
+            params![p.uuid, p.proc_id, p.proc_name, p.num_threads, p.proc_mem, p.proc_cpu, p.proc_bytes_read, p.proc_bytes_written, p.proc_disk_usage, p.proc_kernel_mode_time, p.proc_user_mode_time, p.proc_bytes_received, p.proc_bytes_transmitted, p.proc_net_usage],
         )?;
     }
     Ok(())
@@ -103,10 +111,14 @@ pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
             num_threads: row.get(3)?,
             proc_mem: row.get(4)?,
             proc_cpu: row.get(5)?,
-            proc_disk_usage: row.get(6)?,
-            proc_kernel_mode_time: row.get(7)?,
-            proc_user_mode_time: row.get(8)?,
-            proc_net_usage: row.get(9)?
+            proc_bytes_read: row.get(6)?,
+            proc_bytes_written: row.get(7)?,
+            proc_disk_usage: row.get(8)?,
+            proc_kernel_mode_time: row.get(9)?,
+            proc_user_mode_time: row.get(10)?,
+            proc_bytes_received: row.get(11)?,
+            proc_bytes_transmitted: row.get(12)?,
+            proc_net_usage: row.get(13)?
         })
     })?;
 
@@ -126,8 +138,8 @@ pub fn get_cpu_usage_by_pid(pid: i32) -> Result<Vec<f32>> {
 
     let mut old_cpu_usage = Vec::new();
     while let Some(row) = rows.next()? {
-        old_cpu_usage.push(row.get(7)?);
-        old_cpu_usage.push(row.get(8)?);
+        old_cpu_usage.push(row.get(9)?);
+        old_cpu_usage.push(row.get(10)?);
     }
 
     Ok(old_cpu_usage)

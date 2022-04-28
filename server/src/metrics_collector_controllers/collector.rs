@@ -8,7 +8,7 @@ use sysinfo::*;
 use sysinfo::Signal::Sys;
 use crate::metrics_collector_controllers::structs::Proc;
 use crate::database::{get_cpu_usage_by_pid, get_current_metrics_from_db};
-use crate::format_percent_usage;
+use crate::{format_memory, format_percent_usage};
 
 const SAMPLE_TIME: f32 = 15.0;
 
@@ -46,8 +46,12 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         new_process.set_cpu_usage(cpu_usage.0);
         new_process.set_kernel_mode_time(cpu_usage.1);
         new_process.set_user_mode_time(cpu_usage.2);
-        new_process.set_disk_usage(disk_usage);
-        new_process.set_net_usage(net_usage);
+        new_process.set_bytes_read(disk_usage.0);
+        new_process.set_bytes_written(disk_usage.1);
+        new_process.set_disk_usage(disk_usage.2);
+        new_process.set_bytes_received(net_usage.0);
+        new_process.set_bytes_transmitted(net_usage.1);
+        new_process.set_net_usage(net_usage.2);
 
         processes.push(new_process);
     }
@@ -72,17 +76,17 @@ pub fn collect_memory_usage(p: procfs::process::Process) -> (i32, String, i64, S
 
 // TODO: May need to do this over an interval because you get > 100% usage.
 // TODO: Occasionally a process is not found which causes a crash. Process is likely terminated in middle of method call.
-pub fn collect_disk_usage(p: &procfs::process::Process, disk_space: u64) -> String {
+pub fn collect_disk_usage(p: &procfs::process::Process, disk_space: u64) -> (String, String, String) {
     // Determine how much space this process is using.
-    let read = p.io().unwrap().read_bytes as f32;
-    let written = p.io().unwrap().write_bytes as f32;
+    let read = p.io().unwrap().read_bytes;
+    let written = p.io().unwrap().write_bytes;
 
     // Calculate disk usage of this process as a percentage.
-    let total_bytes = read + written;
-    let disk_usage = (total_bytes / (disk_space as f32)) * 100.0;
+    let total_bytes = read as f32 + written as f32;
+    let disk_usage = (total_bytes / disk_space as f32) * 100.0;
 
     // Kick the percentage of use back up.
-    return format_percent_usage(disk_usage);
+    return (format_memory(read as i64), format_memory(written as i64), format_percent_usage(disk_usage));
 }
 
 // TODO: Make tests to see if it works with both first interval and all others.
@@ -146,7 +150,7 @@ pub fn collect_cpu_usage(p: &procfs::process::Process, is_first_interval: bool) 
     return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
-pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> String {
+pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> (String, String, String) {
     let mut process_inode = 0;
     if let Ok(fds) = p.fd() {
         for fd in fds {
@@ -156,6 +160,8 @@ pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> Str
         }
     }
 
+    let mut bytes_received: u32 = 0;
+    let mut bytes_transmitted: u32 = 0;
     let mut total_usage: f32 = 0.0;
     let mut percent_usage: f32 = 0.0;
 
@@ -164,8 +170,10 @@ pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> Str
     let tcp6 = procfs::net::tcp6().unwrap();
     for entry in tcp.into_iter().chain(tcp6) {
         if process_inode == entry.inode {
-            total_usage += entry.tx_queue as f32;
-            total_usage += entry.rx_queue as f32;
+            bytes_received = entry.rx_queue;
+            bytes_transmitted = entry.tx_queue;
+
+            total_usage += bytes_received as f32 + bytes_transmitted as f32;
 
             if net_data > 0 {
                 if total_usage > 0.0 {
@@ -174,7 +182,7 @@ pub fn collect_network_usage(p: &procfs::process::Process, net_data: u64) -> Str
             }
         }
     }
-    return format_percent_usage(percent_usage);
+    return (format_memory(bytes_received as i64), format_memory(bytes_transmitted as i64), format_percent_usage(percent_usage));
 }
 
 #[cfg(test)]
