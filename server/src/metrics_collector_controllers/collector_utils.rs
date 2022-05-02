@@ -1,3 +1,7 @@
+/*
+This function takes in a number of bytes and formats it in terms of Bytes, KiloBytes,
+MegaBytes, or Gigabytes
+ */
 pub fn format_memory(bytes: i64) -> String {
     let bytes_float = bytes as f64;
     if bytes >= 1000000000 {
@@ -15,6 +19,9 @@ pub fn format_memory(bytes: i64) -> String {
     return format!("{:.2} B", bytes);
 }
 
+/*
+This function takes in a number and returns it as a percentage.
+ */
 pub fn format_percent_usage(usage: f32) -> String {
     return format!("{:.2}%", usage);
 }

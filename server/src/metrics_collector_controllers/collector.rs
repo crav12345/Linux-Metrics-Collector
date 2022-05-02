@@ -7,6 +7,11 @@ use crate::{format_memory, format_percent_usage};
 
 const SAMPLE_TIME: f32 = 15.0;
 
+
+/*
+This function calls for the different types of metrics to be collected from the operating system.
+Metrics for each process are stored in a Proc struct. The struct is then added to a vector of Procs.
+ */
 pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
     let sys = System::new_all();
     let disks = sys.disks();
@@ -51,12 +56,12 @@ pub fn collect_all_metrics(is_first_interval: bool) -> Vec<Proc> {
         processes.push(new_process);
     }
 
-
-    println!("Database Updated");
-
     return processes;
 }
 
+/*
+This function takes in a process and returns a tuple of memory metrics
+ */
 pub fn collect_memory_usage(p: Process) -> (i32, String, i64, String) {
     let id = p.pid;
     let p_memory = p.stat.rss_bytes().unwrap();
@@ -67,6 +72,9 @@ pub fn collect_memory_usage(p: Process) -> (i32, String, i64, String) {
     return (id, p_name, num_threads, mem_usage);
 }
 
+/*
+This function takes in a process and returns a tuple of disk metrics
+ */
 // TODO: May need to do this over an interval because you get > 100% usage.
 // TODO: Process not found bug causes crash.
 pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
@@ -88,6 +96,9 @@ pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
     );
 }
 
+/*
+This function takes in a process and returns a tuple of cpu metrics
+ */
 // TODO: Make tests for both first interval and all others.
 // TODO: > 100% for some early intervals. May need to use is_first_interval.
 pub fn collect_cpu_usage(p: &Process, is_first_interval: bool) -> (
@@ -142,6 +153,9 @@ pub fn collect_cpu_usage(p: &Process, is_first_interval: bool) -> (
     return (cpu_usage_description, kernel_mode_time_now, user_mode_time_now);
 }
 
+/*
+This function takes in a process and returns a tuple of network metrics
+ */
 pub fn collect_network_usage(p: &Process, net_data: u64) -> (
     String, String, String
 ) {

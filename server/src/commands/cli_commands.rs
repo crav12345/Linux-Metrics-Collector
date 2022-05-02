@@ -1,6 +1,9 @@
 use crate::format_percent_usage;
 use crate::metrics_collector_controllers::database;
 
+/*
+This function outputs the most current metrics for all processes
+ */
 pub fn display_database_info() {
     let process_info = database::get_current_metrics_from_db();
 
@@ -26,6 +29,9 @@ pub fn display_database_info() {
     }
 }
 
+/*
+This function outputs the most current cpu information for all processes
+ */
 pub fn display_cpu_info() -> f32 {
     let process_info = database::get_current_metrics_from_db();
 
@@ -63,6 +69,9 @@ pub fn display_cpu_info() -> f32 {
     return total_usage;
 }
 
+/*
+This function outputs the most current disk information for all processes
+ */
 pub fn display_disk_info() -> f32 {
     let process_info = database::get_current_metrics_from_db();
 
@@ -97,6 +106,9 @@ pub fn display_disk_info() -> f32 {
     return total_usage;
 }
 
+/*
+This function outputs the most current network information for all processes
+ */
 pub fn display_net_info() -> f32 {
     let process_info = database::get_current_metrics_from_db();
 
@@ -131,6 +143,10 @@ pub fn display_net_info() -> f32 {
     return total_usage;
 }
 
+/*
+This function outputs a list of commands that can be entered into the CLI to interact with our
+program.
+ */
 pub fn display_help_info() {
     println!("Marist Metrics Collector CLI Commands:");
     println!("     M -> Display all metrics information in the database");
