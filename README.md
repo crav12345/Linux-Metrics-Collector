@@ -1,5 +1,5 @@
 # Linux-Metrics-Collector
-A metrics collection application for Linux machines. Created for MSCS 710 Project at Marist College.
+A metrics collection application for Linux machines. Created for MSCS 710 Software Project at Marist College.
 
 ## Development Environment Setup
 The technologies used to develop this application require development tools themselves to make changes to the project as a whole. This section discusses how to access and make changes to the various modules which make up the frontend and backend of the project.
