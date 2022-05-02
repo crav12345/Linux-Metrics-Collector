@@ -3,6 +3,10 @@ use serde_json::{to_string_pretty};
 use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk};
 use crate::collector::collect_all_metrics;
 
+/*
+This function establishes connection to the database if it exists. If it does not exist, it
+creates the database.
+ */
 pub fn establish_connection() -> Result<()> {
     // Creates a database if it does not already exist
     let path = "src/metrics_collector_controllers/data.db";
@@ -56,8 +60,11 @@ pub fn establish_connection() -> Result<()> {
     Ok(())
 }
 
+/*
+This function takes in a vector of processes from the collector and stores each one in the database.
+ */
 pub fn store_data(processes: Vec<Proc>) -> Result<()> {
-    // Creates a database if it does not already exist
+    // Open connection to the database
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
 
@@ -110,6 +117,10 @@ pub fn store_data(processes: Vec<Proc>) -> Result<()> {
     Ok(())
 }
 
+/*
+This function is called upon the start of the program (and every 15 seconds after then) to drive
+call metrics collection and database maintenance.
+ */
 pub fn update_data(is_first_interval: bool) {
     // Collect data on processes
     let processes: Vec<Proc> = collect_all_metrics(is_first_interval);
@@ -119,7 +130,9 @@ pub fn update_data(is_first_interval: bool) {
     let _purge = purge_database();
 }
 
-
+/*
+This function runs a query that retrieves all of most the current metrics from the database
+ */
 pub fn get_current_metrics_from_db() -> Result<Vec<Proc>> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
@@ -168,6 +181,10 @@ pub fn get_cpu_usage_by_pid(pid: i32) -> Result<Vec<f32>> {
     Ok(old_cpu_usage)
 }
 
+/*
+    This function removes records from the database's 'process' table if they are more than
+    two days
+ */
 pub fn purge_database() -> Result<()> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
@@ -179,7 +196,9 @@ pub fn purge_database() -> Result<()> {
     Ok(())
 }
 
-
+/*
+This function runs a query that returns memory metrics for the most current processes
+ */
 pub fn get_current_memory_info() -> Result<String> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;
@@ -212,6 +231,9 @@ pub fn get_current_memory_info() -> Result<String> {
     Ok(json.to_string())
 }
 
+/*
+This function runs a query that returns disk metrics for the most current processes
+ */
 pub fn get_current_disk_info() -> Result<String> {
     let path = "src/metrics_collector_controllers/data.db";
     let conn = Connection::open(&path)?;

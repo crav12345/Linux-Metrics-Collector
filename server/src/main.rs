@@ -15,6 +15,10 @@ use actix_web::{
     middleware::Logger
 };
 
+/*
+    This function prints the shell name to prompt for user input and waits for user input
+    input. It returns the user input as a sting.
+ */
 fn prompt(name:&str) -> String {
     let mut line = String::new();
     print!("{}", name);
@@ -44,6 +48,7 @@ async fn main() -> std::io::Result<()> {
 
     let _thread_handle = scheduler.watch_thread(Duration::from_millis(100));
 
+    // Run program using the CLI or GUI depending on the command line argument that was used.
     if to_run == "cli" {
         println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
         loop {
