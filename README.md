@@ -1,4 +1,4 @@
-# Linux-Metrics-Collector
+# Linux Metrics Collector
 A metrics collection application for Linux machines. Created for MSCS 710 Software Project at Marist College.
 
 ## Development Environment Setup
