@@ -1,6 +1,6 @@
 use rusqlite::{Connection, Result, params};
 use serde_json::{to_string_pretty};
-use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk};
+use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk, CPU, Network};
 use crate::collector::collect_all_metrics;
 
 /*
@@ -21,13 +21,13 @@ pub fn establish_connection() -> Result<()> {
              num_threads integer not null,
              mem_usage text not null,
              cpu_usage text not null,
-             bytes_read integer not null,
-             bytes_written integer not null,
+             bytes_read text not null,
+             bytes_written text not null,
              disk_usage text not null,
              kernel_mode_time integer not null,
              user_mode_time integer not null,
-             bytes_received integer not null,
-             bytes_transmitted integer not null,
+             bytes_received text not null,
+             bytes_transmitted text not null,
              net_usage text not null,
              date_created DATETIME not null DEFAULT(GETDATE())
          )",
@@ -179,6 +179,107 @@ pub fn get_cpu_usage_by_pid(pid: i32) -> Result<Vec<f32>> {
     }
 
     Ok(old_cpu_usage)
+}
+
+// TODO: get_current_x methods can be reduced to a single function.
+pub fn get_current_cpu_info() -> Result<String> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn
+        .prepare(
+            "SELECT process_id, process_name, cpu_usage FROM current"
+        )?;
+
+    let mut cpu_data: Vec<CPU> = Vec::new();
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(CPU {
+            proc_id: row.get(0)?,
+            proc_name: row.get(1)?,
+            proc_cpu_usage: row.get(2)?
+        })
+    })?;
+
+    // iterate through collected results to push each one to vector
+    for p in process_iter {
+        cpu_data.push(p.unwrap());
+    }
+
+    // convert vector of results to JSON
+    let json = to_string_pretty(&cpu_data).unwrap();
+
+    Ok(json.to_string())
+}
+
+pub fn get_current_metrics_info() -> Result<String> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn
+        .prepare(
+           "SELECT * FROM current"
+        )?;
+
+    let mut metrics_data:Vec<Proc> = Vec::new();
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(Proc {
+            uuid: row.get(0)?,
+            proc_id: row.get(1)?,
+            proc_name:row.get(2)?,
+            num_threads: row.get(3)?,
+            proc_mem: row.get(4)?,
+            proc_cpu: row.get(5)?,
+            proc_bytes_read: row.get(6)?,
+            proc_bytes_written: row.get(7)?,
+            proc_disk_usage: row.get(8)?,
+            proc_kernel_mode_time: row.get(9)?,
+            proc_user_mode_time: row.get(10)?,
+            proc_bytes_received: row.get(11)?,
+            proc_bytes_transmitted: row.get(12)?,
+            proc_net_usage: row.get(13)?
+        })
+    })?;
+
+    // Iterate through all processes and add them to return vector.
+    for p in process_iter {
+        metrics_data.push(p.unwrap());
+    }
+
+    let json= to_string_pretty(&metrics_data).unwrap();
+
+    Ok(json.to_string())
+}
+
+pub fn get_current_network_info() -> Result<String> {
+    let path = "src/metrics_collector_controllers/data.db";
+    let conn = Connection::open(&path)?;
+
+    let mut stmt = conn
+        .prepare(
+            "SELECT process_id, process_name, net_usage FROM current"
+        )?;
+
+    let mut net_data: Vec<Network> = Vec::new();
+
+    let process_iter = stmt.query_map(params![], |row| {
+        Ok(Network {
+            proc_id: row.get(0)?,
+            proc_name: row.get(1)?,
+            proc_net_usage: row.get(2)?
+        })
+    })?;
+
+    // iterate through collected results to push each one to vector
+    for p in process_iter {
+        net_data.push(p.unwrap());
+    }
+
+    // convert vector of results to JSON
+    let json = to_string_pretty(&net_data).unwrap();
+
+    Ok(json.to_string())
 }
 
 /*
