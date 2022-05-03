@@ -114,3 +114,17 @@ pub struct Disk {
     pub proc_name: String,
     pub proc_disk_usage: String
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct CPU {
+    pub proc_id: i32,
+    pub proc_name: String,
+    pub proc_cpu_usage: String
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Network {
+    pub proc_id: i32,
+    pub proc_name: String,
+    pub proc_net_usage: String
+}
