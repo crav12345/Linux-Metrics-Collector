@@ -70,7 +70,7 @@ async fn main() -> std::io::Result<()> {
         return Ok(())
     }
     else {
-        // Go to 'http://127.0.0.1:8080/' to test routes
+        // Go to 'http://127.0.0.1:8080/api' to test routes
         // Start http server
         HttpServer::new(move || {
             // Pass in default logger object
@@ -78,9 +78,12 @@ async fn main() -> std::io::Result<()> {
             // Create App Instance
             App::new()
                 //.wrap(logger)
-                .service(handlers::hello)
+                .service(handlers::mmc_info)
+                .service(handlers::current_metrics_info)
                 .service(handlers::current_mem_info)
                 .service(handlers::current_disk_info)
+                .service(handlers::current_cpu_info)
+                .service(handlers::current_network_info)
         })
             .bind(("127.0.0.1", 8080))?
             .run()
