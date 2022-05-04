@@ -80,9 +80,18 @@ This function takes in a process and returns a tuple of disk metrics
 pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
     String, String, String
 ) {
-    // Determine how much space this process is using.
-    let read = p.io().unwrap().read_bytes;
-    let written = p.io().unwrap().write_bytes;
+    let mut read = 0;
+    let mut written = 0;
+
+    // Checks the io file of a process.
+    let io = p.io();
+    let io = match io {
+        Ok(io_file) => {
+            read = io_file.read_bytes;
+            written = io_file.write_bytes;
+        },
+        Err(error) => println!("Couldn't read io file for process {}", p.pid),
+    };
 
     // Calculate disk usage of this process as a percentage.
     let total_bytes = read as f32 + written as f32;
