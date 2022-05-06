@@ -51,3 +51,24 @@ The technologies used to develop this application require development tools them
 * Editing or building upon the database
   * Whenever the database must be changed or restarted, the 'data.db' file has to be deleted from the project folder
   * Rebuild it by re-running the server
+  
+### Docker Stuff
+* Docker build
+  * cd into the 'server' director
+  * Enter command: `sudo docker build . -t server:01`
+* Docker Run
+  * From 'server', enter command: `sudo docker run -it --pid="host" --privileged --name myServer server:01`
+
+## Docker Cheatsheet
+* Remove Container:
+  * `sudo docker rm myServer`
+* Remove Image: 
+  * `sudo docker image rm server:01`
+* See Containers:
+  * `sudo docker ps -a`
+* See Images:
+  * `sudo docker images`
+* Start Container:
+  * `sudo docker myServer start`
+* Pause Container:
+  * `sudo docker myServer pause`
