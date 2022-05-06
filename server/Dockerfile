@@ -8,4 +8,4 @@ COPY ./Cargo.toml ./Cargo.toml
 
 RUN cargo install --path .
 
-ENTRYPOINT ["server", "cli"]
+ENTRYPOINT ["server"]
