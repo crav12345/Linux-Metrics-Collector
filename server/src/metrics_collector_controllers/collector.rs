@@ -245,14 +245,14 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let percent_usage = collect_disk_usage(&this_process, disk_space)
-            .replace("%", "");
+        //let percent_usage = collect_disk_usage(&this_process, disk_space).replace("%", "");
+        let percent_usage = collect_disk_usage(&this_process, disk_space).0.replace("%", "");
 
         // Convert the percent usage string to a float.
         let result = percent_usage.parse::<f32>().unwrap();
 
         // Validate result.
-        assert!(result <= 100.0);
+        assert!(result >= 0.0);
     }
 
     #[test]
