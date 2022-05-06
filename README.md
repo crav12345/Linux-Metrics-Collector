@@ -53,22 +53,28 @@ The technologies used to develop this application require development tools them
   * Rebuild it by re-running the server
   
 ### Docker Stuff
-* Docker build
-  * cd into the 'server' director
-  * Enter command: `sudo docker build . -t server:01`
-* Docker Run
-  * From 'server', enter command: `sudo docker run -it --pid="host" --privileged --name myServer server:01`
+* Build Images 
+  * `cd` into the 'server' directory
+  * Server-Side:
+    * Enter command: `sudo docker build . -t server:01`
+* Create Containers
+  * CLI Container:
+    * From 'server', enter command: `sudo docker run -it --pid="host" --privileged --name myCLI server:01 cli`
+  * HTTP Server Container:
+    * From 'server', enter command: `sudo docker run -it --pid="host" --network="host" --privileged --name myServer \
+                                          server:01 server`
 
-## Docker Cheatsheet
+
+## Docker Cheatsheet (Will be removed later)
 * Remove Container:
-  * `sudo docker rm myServer`
+  * `sudo docker rm <containerName>`
 * Remove Image: 
-  * `sudo docker image rm server:01`
+  * `sudo docker image rm <imageName>:<tag>`
 * See Containers:
   * `sudo docker ps -a`
 * See Images:
   * `sudo docker images`
 * Start Container:
-  * `sudo docker myServer start`
+  * `sudo docker <containerName> start`
 * Pause Container:
-  * `sudo docker myServer pause`
+  * `sudo docker <containerName> pause`
