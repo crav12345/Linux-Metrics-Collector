@@ -214,6 +214,7 @@ mod collector_tests {
     #[test]
     fn cpu_usage() {
         use procfs::process::Process;
+
         // Check this program's process ID.
         let this_process = Process::myself().unwrap();
 
@@ -230,10 +231,13 @@ mod collector_tests {
             // Validate result.
             assert_eq!(result_vector.0, "LOADING");
         }
+
+
     }
 
     #[test]
     fn disk_usage() {
+        use procfs::process::Process;
         let mut sys = sysinfo::System::new_all();
         let mut disks = sys.disks();
         let mut disk_space = 0;
@@ -245,11 +249,10 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        //let percent_usage = collect_disk_usage(&this_process, disk_space).replace("%", "");
-        let percent_usage = collect_disk_usage(&this_process, disk_space).0.replace("%", "");
+        let percent_usage = collect_disk_usage(&this_process, disk_space).2.replace("%", "");
 
         // Convert the percent usage string to a float.
-        let result = percent_usage.parse::<f32>().unwrap();
+        let result = percent_usage.trim().parse::<f32>().unwrap();
 
         // Validate result.
         assert!(result >= 0.0);
