@@ -4,9 +4,9 @@ use sysinfo::{DiskExt, NetworkExt, System, SystemExt};
 use crate::metrics_collector_controllers::structs::Proc;
 use crate::database::get_cpu_usage_by_pid;
 use crate::{format_memory, format_percent_usage};
+use log::{info, warn};
 
 const SAMPLE_TIME: f32 = 15.0;
-
 
 /*
 This function calls for the different types of metrics to be collected from the operating system.
@@ -90,7 +90,10 @@ pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
             read = io_file.read_bytes;
             written = io_file.write_bytes;
         },
-        Err(_error) => println!("Couldn't read io file for process {}", p.pid),
+        Err(_error) => {
+            println!("Couldn't read io file for process {}", p.pid);
+            log::warn!("Couldn't read io file for process {}", p.pid);
+        },
     };
 
     // Calculate disk usage of this process as a percentage.
