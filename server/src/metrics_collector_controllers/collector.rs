@@ -85,12 +85,12 @@ pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
 
     // Checks the io file of a process.
     let io = p.io();
-    let io = match io {
+    let _io = match io {
         Ok(io_file) => {
             read = io_file.read_bytes;
             written = io_file.write_bytes;
         },
-        Err(error) => println!("Couldn't read io file for process {}", p.pid),
+        Err(_error) => println!("Couldn't read io file for process {}", p.pid),
     };
 
     // Calculate disk usage of this process as a percentage.
@@ -214,6 +214,7 @@ mod collector_tests {
     #[test]
     fn cpu_usage() {
         use procfs::process::Process;
+
         // Check this program's process ID.
         let this_process = Process::myself().unwrap();
 
@@ -225,17 +226,19 @@ mod collector_tests {
             let percent_usage = result_vector.0.replace("%", "");
             let result = percent_usage.parse::<f32>().unwrap();
 
-            assert!(result <= 100.0);
+            assert!(result >= 0.0);
         } else {
             // Validate result.
             assert_eq!(result_vector.0, "LOADING");
         }
+
+
     }
 
     #[test]
     fn disk_usage() {
-        let mut sys = sysinfo::System::new_all();
-        let mut disks = sys.disks();
+        let sys = sysinfo::System::new_all();
+        let disks = sys.disks();
         let mut disk_space = 0;
         for disk in disks {
             disk_space += disk.available_space();
@@ -245,14 +248,14 @@ mod collector_tests {
         let this_process = procfs::process::Process::myself().unwrap();
 
         // Get the cpu usage of this process.
-        let percent_usage = collect_disk_usage(&this_process, disk_space)
+        let percent_usage = collect_disk_usage(&this_process, disk_space).2
             .replace("%", "");
 
         // Convert the percent usage string to a float.
-        let result = percent_usage.parse::<f32>().unwrap();
+        let result = percent_usage.trim().parse::<f32>().unwrap();
 
         // Validate result.
-        assert!(result <= 100.0);
+        assert!(result >= 0.0);
     }
 
     #[test]
