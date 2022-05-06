@@ -225,7 +225,7 @@ mod collector_tests {
             let percent_usage = result_vector.0.replace("%", "");
             let result = percent_usage.parse::<f32>().unwrap();
 
-            assert!(result <= 100.0);
+            assert!(result >= 0.0);
         } else {
             // Validate result.
             assert_eq!(result_vector.0, "LOADING");
