@@ -385,4 +385,10 @@ mod database_tests {
     fn test_get_current_metrics_from_db() {
         assert!(crate::database::get_current_metrics_from_db().is_ok());
     }
+
+    #[test]
+    fn test_purge_database() {
+        assert!(crate::database::purge_database().is_ok());
+    }
+
 }
