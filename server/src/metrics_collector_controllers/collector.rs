@@ -91,7 +91,6 @@ pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
             written = io_file.write_bytes;
         },
         Err(_error) => {
-            println!("Couldn't read io file for process {}", p.pid);
             log::warn!("Couldn't read io file for process {}", p.pid);
         },
     };
