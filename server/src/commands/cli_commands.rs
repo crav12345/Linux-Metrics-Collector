@@ -29,6 +29,16 @@ pub fn display_database_info() {
     }
 }
 
+pub fn display_mem_info() {
+    let process_info = database::get_current_metrics_from_db();
+
+    println!("{0: <7} | {1: <43} |{2: <7}", "PID", "NAME", "MEMORY");
+    println!("---------------------------------------------------------");
+    for p in process_info.unwrap() {
+        println!("{0: <7} | {1: <43} | {2: <10}", p.proc_id, p.proc_name, p.proc_mem)
+    }
+}
+
 /*
 This function outputs the most current cpu information for all processes
  */
@@ -149,7 +159,8 @@ program.
  */
 pub fn display_help_info() {
     println!("Marist Metrics Collector CLI Commands:");
-    println!("     M -> Display all metrics information in the database");
+    println!("     ALL -> Display all metrics information in the database");
+    println!("     MEM -> Display process memory information");
     println!("     CPU -> Display CPU usage of all processes as a percent");
     println!("     Disk -> Display disk usage of all processes as a percent");
     println!(

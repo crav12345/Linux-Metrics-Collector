@@ -54,8 +54,10 @@ async fn main() -> std::io::Result<()> {
         println!("USE COMMAND 'HELP' FOR ALL CLI COMMANDS");
         loop {
             let input = prompt("MCC>  ");
-            if input == "M" || input == "m" {
+            if input.to_case(Case::Lower) == "all" {
                 cli_commands::display_database_info();
+            } else if input.to_case(Case::Lower) == "mem" {
+                cli_commands::display_mem_info();
             } else if input.to_case(Case::Lower) == "cpu" {
                 cli_commands::display_cpu_info();
             } else if input.to_case(Case::Lower) == "disk" {
