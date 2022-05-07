@@ -4,7 +4,7 @@ use sysinfo::{DiskExt, NetworkExt, System, SystemExt};
 use crate::metrics_collector_controllers::structs::Proc;
 use crate::database::get_cpu_usage_by_pid;
 use crate::{format_memory, format_percent_usage};
-use log::{info, warn};
+use log::{warn};
 
 const SAMPLE_TIME: f32 = 15.0;
 
@@ -91,7 +91,7 @@ pub fn collect_disk_usage(p: &Process, disk_space: u64) -> (
             written = io_file.write_bytes;
         },
         Err(_error) => {
-            log::warn!("Couldn't read io file for process {}", p.pid);
+            warn!("Couldn't read io file for process {}", p.pid);
         },
     };
 
