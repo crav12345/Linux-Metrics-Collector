@@ -1,0 +1,44 @@
+#title_container {
+	text-align: center;
+	margin: auto;
+	padding: 10px;
+	width: 66%;
+	border-style: solid;
+	border-color: black;
+}
+
+#title {
+	font-size: 50px;
+	color: red;
+}
+
+#authors {
+	font-size: 15px;
+}
+
+#button_container {
+	background-color: lightgray;
+	width: 66%;
+	margin: auto;
+	text-align: center;
+	padding: 10px;
+	border-style: solid;
+	border-color: lightgray;
+}
+
+#content_container {
+	padding: 10px;
+	border-style: solid;
+	border-color: red;
+	width: 66%;
+	margin: auto;
+}
+
+table, th, td {
+  border: 1px solid;
+  margin: auto;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}

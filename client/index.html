@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/client/css/index.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="/client/js/index.js"></script>
+	</head>
+	<body>
+		<div id="title_container">
+			<h1 id="title">Marist Metrics Collector</h1>
+			<h1 id="authors">by Christopher Ravosa, Connor Fitzpatrick, & Michael Durso</h1>
+		</div>
+		<div id="button_container">
+			<p>Discover device metrics with the buttons below:</p>
+			<button type="button" onclick="getAllMetrics()">All Metrics</button>
+			<button type="button" onclick="getMemoryUsage()">Memory Usage</button>
+			<button type="button" onclick="getDiskUsage()">Disk Usage</button>
+			<button type="button" onclick="getCPUUsage()">CPU Usage</button>
+			<button type="button" onclick="getNetworkUsage()">Network Usage</button>
+		</div>
+		<div id="content_container">
+			<table id="table"></table>
+		</div>
+	</body>
+</html>
