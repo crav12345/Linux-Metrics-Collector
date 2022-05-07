@@ -11,7 +11,9 @@ use std::env;
 use std::path::PathBuf;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
-use actix_web::{App, HttpResponse, HttpServer, middleware::Logger, web, HttpRequest, Result, Error};
+use actix_web::{
+    App, HttpServer, middleware::Logger, web, HttpRequest, Result
+};
 use actix_files::NamedFile;
 
 /*
