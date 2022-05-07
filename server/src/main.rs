@@ -8,12 +8,11 @@ use collector_utils::*;
 use std::time::Duration;
 use std::io::Write;
 use std::env;
+use std::path::PathBuf;
 use clokwerk::{Scheduler, TimeUnits};
 use convert_case::{Case, Casing};
-use actix_web::{
-    App, HttpServer,
-    middleware::Logger
-};
+use actix_web::{App, HttpResponse, HttpServer, middleware::Logger, web, HttpRequest, Result, Error};
+use actix_files::NamedFile;
 
 /*
     This function prints the shell name to prompt for user input and waits for user input
@@ -78,6 +77,9 @@ async fn main() -> std::io::Result<()> {
             // Create App Instance
             App::new()
                 //.wrap(logger)
+                .route("/", web::get().to(index))
+                // Serves client-side resources via HTTP server.
+                .service(actix_files::Files::new("/client", "./../client").show_files_listing())
                 .service(handlers::mmc_info)
                 .service(handlers::current_metrics_info)
                 .service(handlers::current_mem_info)
@@ -89,4 +91,9 @@ async fn main() -> std::io::Result<()> {
             .run()
             .await
     }
+}
+
+async fn index(_req: HttpRequest) -> Result<NamedFile> {
+    let path: PathBuf = "./../client/index.html".parse().unwrap();
+    Ok(NamedFile::open(path)?)
 }
