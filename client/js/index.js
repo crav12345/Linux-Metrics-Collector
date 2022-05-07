@@ -93,10 +93,51 @@ function colHeaders(data, selector) {
                  
                 for (var k in row) {
         	        if ($.inArray(k, columns) == -1) {
-        	                columns.push(k);
-                         
-        	                // Creating the header
-        	                header.append($('<th/>').html(k));
+        	                // Ignore uuid column.
+        	                if (k != "uuid" && k != "proc_kernel_mode_time" && k != "proc_user_mode_time") {
+	        	                columns.push(k);
+                         		
+                         		switch (k) {
+						case 'proc_id':
+							k = "PID";
+							break;
+						case 'proc_name':
+							k = "Process Name"
+							break;
+						case 'num_threads':
+							k = "Threads"
+							break;
+						case 'proc_mem':
+							k = "Memory"
+							break;
+						case 'proc_cpu':
+							k = "CPU"
+							break;
+						case 'proc_bytes_read':
+							k = "Read"
+							break;
+						case 'proc_bytes_written':
+							k = "Written"
+							break;
+						case 'proc_disk_usage':
+							k = "Disk"
+							break;
+						case 'proc_bytes_received':
+							k = "Received"
+							break;
+						case 'proc_bytes_transmitted':
+							k = "Transmitted"
+							break;
+						case 'proc_net_usage':
+							k = "Network"
+							break;
+						default:
+							console.log(`Couldn't find ${k}.`);
+					}
+                         		
+        		                // Creating the header
+	        	                header.append($('<th/>').html(k));
+	        	        }
         	        }
                 }
 	}
