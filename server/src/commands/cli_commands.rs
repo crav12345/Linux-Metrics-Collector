@@ -114,7 +114,6 @@ pub fn display_net_info() -> f32 {
 
     // Used to find sum of all usages.
     let mut total_usage: f32 = 0.0;
-
     println!("{0: <7} | {1: <43} |{2: <7}", "PID", "NAME", "NETWORK");
     println!("--------------------------------------------------------------");
     for p in process_info.unwrap() {
@@ -122,7 +121,7 @@ pub fn display_net_info() -> f32 {
         let percent_usage_string = p.proc_net_usage.replace("%", "");
 
         // Convert the percent usage string to a float.
-        let percent_usage = percent_usage_string.parse::<f32>().unwrap();
+        let percent_usage: f32 = percent_usage_string.trim().parse().unwrap();
 
         // Add to the total disk usage.
         total_usage += percent_usage;
@@ -133,6 +132,7 @@ pub fn display_net_info() -> f32 {
             p.proc_id, p.proc_name, p.proc_net_usage
         );
     }
+
     // Output the total disk allocation.
     println!(
         "TOTAL NETWORK USAGE OVER LAST INTERVAL: {0: <7}",
@@ -156,26 +156,4 @@ pub fn display_help_info() {
         "     NET -> Display network usage of all processes as a percent"
     );
     println!("     Exit -> Quit the application");
-}
-
-#[cfg(test)]
-mod cli_command_tests {
-    use crate::cli_commands::{
-        display_cpu_info, display_disk_info, display_net_info
-    };
-
-    #[test]
-    fn test_display_cpu_info() {
-        assert!(display_cpu_info() <= 100.0);
-    }
-
-    #[test]
-    fn test_display_disk_info() {
-        assert!(display_disk_info() <= 100.0);
-    }
-
-    #[test]
-    fn test_display_net_info() {
-        assert!(display_net_info() <= 100.0);
-    }
 }

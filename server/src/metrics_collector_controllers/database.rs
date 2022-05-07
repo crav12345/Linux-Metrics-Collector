@@ -2,6 +2,7 @@ use rusqlite::{Connection, Result, params};
 use serde_json::{to_string_pretty};
 use crate::metrics_collector_controllers::structs::{Proc, Memory, Disk, CPU, Network};
 use crate::collector::collect_all_metrics;
+use log::{info};
 
 /*
 This function establishes connection to the database if it exists. If it does not exist, it
@@ -128,6 +129,9 @@ pub fn update_data(is_first_interval: bool) {
     // Send the vector of processes away to be stored in the database
     let _store_processes = store_data(processes);
     let _purge = purge_database();
+
+    // Log database updates
+    info!("Database Updated")
 }
 
 /*
@@ -385,4 +389,10 @@ mod database_tests {
     fn test_get_current_metrics_from_db() {
         assert!(crate::database::get_current_metrics_from_db().is_ok());
     }
+
+    #[test]
+    fn test_purge_database() {
+        assert!(crate::database::purge_database().is_ok());
+    }
+
 }
