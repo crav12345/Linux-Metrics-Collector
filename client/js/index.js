@@ -5,7 +5,7 @@ function getAllMetrics() {
 		method: 'GET',
 		headers: {
 			'content-type': 'application/json; charset = UTF-8',
-			'cache-control': 'no-cache' // <- finish removing cache and format tables.
+			'cache-control': 'no-cache'
 		}
 	})
 	.then(response => response.json())
@@ -17,7 +17,7 @@ function getMemoryUsage() {
 		method: 'GET',
 		headers: {
 			'content-type': 'application/json; charset = UTF-8',
-			'cache-control': 'no-cache' // <- finish removing cache and format tables.
+			'cache-control': 'no-cache'
 		}
 	})
 	.then(response => response.json())
@@ -29,7 +29,7 @@ function getDiskUsage() {
 		method: 'GET',
 		headers: {
 			'content-type': 'application/json; charset = UTF-8',
-			'cache-control': 'no-cache' // <- finish removing cache and format tables.
+			'cache-control': 'no-cache'
 		}
 	})
 	.then(response => response.json())
@@ -41,7 +41,7 @@ function getCPUUsage() {
 		method: 'GET',
 		headers: {
 			'content-type': 'application/json; charset = UTF-8',
-			'cache-control': 'no-cache' // <- finish removing cache and format tables.
+			'cache-control': 'no-cache'
 		}
 	})
 	.then(response => response.json())
@@ -53,7 +53,7 @@ function getNetworkUsage() {
 		method: 'GET',
 		headers: {
 			'content-type': 'application/json; charset = UTF-8',
-			'cache-control': 'no-cache' // <- finish removing cache and format tables.
+			'cache-control': 'no-cache'
 		}
 	})
 	.then(response => response.json())
