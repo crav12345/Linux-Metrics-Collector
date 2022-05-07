@@ -113,6 +113,9 @@ function colHeaders(data, selector) {
 						case 'proc_cpu':
 							k = "CPU"
 							break;
+						case 'proc_cpu_usage':
+							k = "CPU"
+							break;
 						case 'proc_bytes_read':
 							k = "Read"
 							break;
