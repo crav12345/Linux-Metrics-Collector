@@ -31,7 +31,10 @@
 	border-style: solid;
 	border-color: red;
 	width: 66%;
+	height: 450px;
 	margin: auto;
+	overflow: scroll;
+	white-space: nowrap;
 }
 
 table, th, td {
