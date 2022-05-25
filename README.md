@@ -1,7 +1,7 @@
 # Linux Metrics Collector
 A metrics collection application for Linux machines. Created for MSCS 710 Software Project at Marist College.
 
-## Development Environment
+## Development Tools
 This section discusses the development tools and the steps required to set them up to make changes to the project.
 ### Required
 * Device running Linux or a Linux virtual machine
