@@ -3,37 +3,42 @@ A metrics collection application for Linux machines. Created for MSCS 710 Softwa
 
 ## Development Environment
 This section discusses the development tools and the steps required to set them up to make changes to the project.
-
 ### Required
 * Device running Linux or a Linux virtual machine
-  * [Oracle VirtualBox](https://www.virtualbox.org/)
-  * [VMware](https://www.vmware.com/)
-* [Rust](https://www.rust-lang.org/tools/install)
+  * Options for VMs include [Oracle VirtualBox](https://www.virtualbox.org/), [VMware](https://www.vmware.com/), and others
+* [Rust](https://www.rust-lang.org/tools/install) programming language
 ### Recommended
 * [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/#section=windows) with Rust and TOML plugins
   * File -> Settings -> Plugins
   * Search for "Rust" and click "Install"
   * When prompted to install "TOML", click Yes
 
-### Rust HTTP Server (From IntelliJ)
-* Setup run configuration for server
-  * From the project root, open the 'server/src' directories
-  * Select the main.rs file in the project hierarchy
-  * In the toolbar, click Run > Edit > Configurations
-  * Click "Add a new configuration" > cargo
-  * Name the configuration "Server"
-  * Set the working directory to
-    * ~/.../Metrics-Collector/server
-  * Check the box that says "Run with root privileges"
-* Click on the Cargo.toml file and click Attach in the top left of IntelliJ
-* Hit Ok and try running the application
+## Run Application From IntelliJ
+### Web Browser Run Configuration
+* Open "~/.../Metrics-Collector/server/src" directory
+* Select "main.rs" file in project hierarchy
+* In the toolbar, click Run -> Edit -> Configurations
+* Click "Add a new configuration" -> Cargo
+* Name the configuration
+* Set the working directory to "~/.../Metrics-Collector/server"
+* Check the box that says "Run with root privileges"
+* Select Cargo.toml file and click "Attach" in the top left of IntelliJ window
+* Hit "Ok" and run the application
+* View the application at http://127.0.0.1:8080
 
-### RUST Command Line Server (From IntelliJ)
-* Setup a run configuration for the CLI just as you did for the server, except:
-  * Name it "CLI"
-  * For "Command" enter `run cli`
+### Command Line Run Configuration
+* Open "~/.../Metrics-Collector/server/src" directory
+* Select "main.rs" file in project hierarchy
+* In the toolbar, click Run -> Edit -> Configurations
+* Click "Add a new configuration" -> Cargo
+* Name the configuration
+* Set the working directory to "~/.../Metrics-Collector/server"
+* Check the box that says "Run with root privileges"
+* For "Command" enter `run cli`
+* Select Cargo.toml file and click "Attach" in the top left of IntelliJ window
+* Hit "Ok" and run the application
 
-### Run Program From Command Line
+## Run Application From Command Line
 * From root directory: `cd server`
 * `cargo build`
 * To use command line interface version of app:
@@ -41,7 +46,7 @@ This section discusses the development tools and the steps required to set them 
 * To use gui version of app:
   * `sudo ./target/debug/server server`
 
-### Interacting with the Database
+## Interacting with the Database
 * Running the server will automatically create a database if it is not there already.
   * It will appear in the 'metrics_collector_controllers' directory
 * To query the database
@@ -53,7 +58,7 @@ This section discusses the development tools and the steps required to set them 
   * Whenever the database must be changed or restarted, the 'data.db' file has to be deleted from the project folder
   * Rebuild it by re-running the server
   
-### Docker Stuff
+## Docker
 * Build Images 
   * `cd` into the 'server' directory
   * Server-Side:
@@ -64,18 +69,3 @@ This section discusses the development tools and the steps required to set them 
   * HTTP Server Container:
     * From 'server', enter command: `sudo docker run -it --pid="host" --network="host" --privileged --name myServer \
                                           server:01 server`
-
-
-## Docker Cheatsheet (Will be removed later)
-* Remove Container:
-  * `sudo docker rm <containerName>`
-* Remove Image: 
-  * `sudo docker image rm <imageName>:<tag>`
-* See Containers:
-  * `sudo docker ps -a`
-* See Images:
-  * `sudo docker images`
-* Start Container:
-  * `sudo docker <containerName> start`
-* Pause Container:
-  * `sudo docker <containerName> pause`
