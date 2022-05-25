@@ -1,11 +1,17 @@
 # Linux Metrics Collector
 A metrics collection application for Linux machines. Created for MSCS 710 Software Project at Marist College.
 
-## Development Environment Setup
-The technologies used to develop this application require development tools themselves to make changes to the project as a whole. This section discusses how to access and make changes to the various modules which make up the frontend and backend of the project.
+## Development Environment
+This section discusses the development tools and the steps required to set them up to make changes to the project.
 
-### First Steps
-* Download [Rust](https://www.rust-lang.org/tools/install)
+### Linux or Virtual Machine
+This project requires a device running Linux to operate. If your preferred device doesn't run on a Linux OS, you may prefer to utilize a virtual machine to run the application. Some options for running Linux on a VM include:
+* [Oracle VirtualBox](https://www.virtualbox.org/)
+* [VMware](https://www.vmware.com/)
+
+### Development Tools
+#### Required
+* [Rust](https://www.rust-lang.org/tools/install)
 * Download [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/#section=windows)
 * Download Rust and TOML plugins for IntelliJ IDEA
   * In IntelliJ IDEA go to File > Settings > Plugins
